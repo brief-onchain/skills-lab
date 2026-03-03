@@ -13,8 +13,7 @@
       "author": "skillsbrain",
       "mode": "live",
       "inputExample": { "symbol": "BTCUSDT" },
-      "installCommand": "npx @skillsbrain/price-snapshot",
-      "originRepo": "https://github.com/danishashko/binance-mcp-server"
+      "installCommand": "npx @skillsbrain/price-snapshot"
     },
     {
       "id": "top-movers",
@@ -25,8 +24,7 @@
       "author": "skillsbrain",
       "mode": "live",
       "inputExample": { "quoteAsset": "USDT", "limit": 10 },
-      "installCommand": "npx @skillsbrain/top-movers-radar",
-      "originRepo": "https://github.com/AnalyticAce/BinanceMCPServer"
+      "installCommand": "npx @skillsbrain/top-movers-radar"
     },
     {
       "id": "kline-brief",
@@ -37,8 +35,7 @@
       "author": "skillsbrain",
       "mode": "live",
       "inputExample": { "symbol": "BNBUSDT", "interval": "15m", "limit": 24 },
-      "installCommand": "npx @skillsbrain/kline-brief",
-      "originRepo": "https://github.com/danishashko/binance-mcp-server"
+      "installCommand": "npx @skillsbrain/kline-brief"
     },
     {
       "id": "funding-watch",
@@ -49,8 +46,7 @@
       "author": "skillsbrain",
       "mode": "live",
       "inputExample": { "symbol": "BTCUSDT" },
-      "installCommand": "npx @skillsbrain/funding-watch",
-      "originRepo": "https://github.com/tripolskypetr/trading-signals-mcp"
+      "installCommand": "npx @skillsbrain/funding-watch"
     },
     {
       "id": "open-interest-scan",
@@ -61,8 +57,7 @@
       "author": "skillsbrain",
       "mode": "live",
       "inputExample": { "symbol": "ETHUSDT" },
-      "installCommand": "npx @skillsbrain/open-interest-scan",
-      "originRepo": "https://github.com/kukapay/crypto-liquidations-mcp"
+      "installCommand": "npx @skillsbrain/open-interest-scan"
     },
     {
       "id": "symbol-status",
@@ -89,16 +84,14 @@
   ],
   "openSourceCandidates": [
     {
-      "name": "binance-mcp-server",
-      "repo": "https://github.com/danishashko/binance-mcp-server",
-      "sourceTag": "github-intake",
-      "adaptation": "Keep read-only market data tools and remove mutation tools."
+      "name": "Market Data Module",
+      "sourceTag": "intake",
+      "adaptation": "Data read-only module for fast launch."
     },
     {
-      "name": "BinanceMCPServer",
-      "repo": "https://github.com/AnalyticAce/BinanceMCPServer",
-      "sourceTag": "github-intake",
-      "adaptation": "Reuse tool contracts and route through SkillsBrain API."
+      "name": "Signals Module",
+      "sourceTag": "intake",
+      "adaptation": "Indicator/signal style module for future phase."
     }
   ]
 }

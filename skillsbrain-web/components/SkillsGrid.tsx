@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { ApiClient } from '@/lib/api';
 import { Skill } from '@/lib/types';
@@ -77,16 +78,23 @@ export default function SkillsGrid() {
                 <span className="text-text-sub/40 font-mono text-[10px] truncate max-w-[12rem]">
                   {skill.installCommand || ''}
                 </span>
-                <button 
-                  className="text-gold text-sm font-bold hover:text-white transition-colors flex items-center gap-2"
-                  onClick={() => {
-                    const playground = document.getElementById('playground');
-                    playground?.scrollIntoView({ behavior: 'smooth' });
-                    // Ideally dispatch event to select this skill in playground
-                  }}
-                >
-                  TRY IT <span className="text-lg">→</span>
-                </button>
+                <div className="flex items-center gap-3">
+                  <Link
+                    href={`/skills/${skill.id}`}
+                    className="text-gold text-sm font-bold hover:text-white transition-colors"
+                  >
+                    DETAILS
+                  </Link>
+                  <button 
+                    className="text-gold text-sm font-bold hover:text-white transition-colors flex items-center gap-2"
+                    onClick={() => {
+                      const playground = document.getElementById('playground');
+                      playground?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    TRY IT <span className="text-lg">→</span>
+                  </button>
+                </div>
               </div>
             </div>
           ))}

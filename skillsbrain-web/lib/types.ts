@@ -8,8 +8,6 @@ export interface Skill {
   mode?: 'live' | 'guide';
   inputExample?: Record<string, unknown>;
   installCommand?: string;
-  originRepo?: string;
-  sourceRef?: string;
   libraryId?: string;
   libraryName?: string;
 }
@@ -48,9 +46,10 @@ export interface ExcludedDirection {
 
 export interface OpenSourceCandidate {
   name: string;
-  repo: string;
+  repo?: string;
   sourceTag: string;
   adaptation: string;
+  localMirrorPath?: string;
 }
 
 export interface CatalogPayload {

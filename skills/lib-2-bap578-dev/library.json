@@ -2,7 +2,7 @@
   "libraryId": "lib-2-bap578-dev",
   "name": "Skills Library 2 - BAP578 Dev",
   "version": "0.1.0",
-  "description": "Simple BAP578 contract/dev helper skills based on local flap-nfa-mint patterns.",
+  "description": "Simple BAP578 contract/dev helper skills based on internal patterns.",
   "skills": [
     {
       "id": "bap578-adapter-blueprint",
@@ -13,8 +13,7 @@
       "author": "skillsbrain",
       "mode": "guide",
       "inputExample": { "contractName": "MyBAP578Adapter", "nfaInterface": "INFAOwner" },
-      "installCommand": "npx @skillsbrain/bap578-adapter-blueprint",
-      "sourceRef": "flap-nfa-mint/contracts/arena/FlapBAP578Adapter.sol"
+      "installCommand": "npx @skillsbrain/bap578-adapter-blueprint"
     },
     {
       "id": "bap578-vault-checklist",
@@ -25,8 +24,7 @@
       "author": "skillsbrain",
       "mode": "guide",
       "inputExample": { "includeTokenFlows": true },
-      "installCommand": "npx @skillsbrain/bap578-vault-checklist",
-      "sourceRef": "flap-nfa-mint/contracts/arena/FlapBAP578Adapter.sol"
+      "installCommand": "npx @skillsbrain/bap578-vault-checklist"
     },
     {
       "id": "bap578-deploy-plan",
@@ -37,8 +35,7 @@
       "author": "skillsbrain",
       "mode": "guide",
       "inputExample": { "network": "bsc-mainnet" },
-      "installCommand": "npx @skillsbrain/bap578-deploy-plan",
-      "sourceRef": "flap-nfa-mint/scripts/deploy-arena.js"
+      "installCommand": "npx @skillsbrain/bap578-deploy-plan"
     },
     {
       "id": "bap578-test-template",
@@ -49,8 +46,7 @@
       "author": "skillsbrain",
       "mode": "guide",
       "inputExample": { "tokenId": 1, "includeFeeOnTransferCase": true },
-      "installCommand": "npx @skillsbrain/bap578-test-template",
-      "sourceRef": "flap-nfa-mint/test/ArenaFlow.test.js"
+      "installCommand": "npx @skillsbrain/bap578-test-template"
     },
     {
       "id": "bap578-contract-idea-sprint",
@@ -62,14 +58,6 @@
       "mode": "guide",
       "inputExample": { "idea": "Agent escrow for on-chain game rewards" },
       "installCommand": "npx @skillsbrain/bap578-contract-idea-sprint"
-    }
-  ],
-  "openSourceCandidates": [
-    {
-      "name": "Local flap-nfa-mint",
-      "repo": "local:/Users/klxhans/Downloads/flap-nfa-mint",
-      "sourceTag": "local-source",
-      "adaptation": "Use adapter/deploy/test patterns as fast BAP578 skills templates."
     }
   ]
 }

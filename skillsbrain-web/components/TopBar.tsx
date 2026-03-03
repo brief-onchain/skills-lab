@@ -7,7 +7,7 @@ export default function TopBar() {
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-gold rounded-sm animate-pulse" />
           <span className="font-heading font-bold text-xl tracking-wider text-text-main">
-            SKILLS<span className="text-gold">LAB</span>
+            SKILLS<span className="text-gold">BRAIN</span>
           </span>
         </div>
         

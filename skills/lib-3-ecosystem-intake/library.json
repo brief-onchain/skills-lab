@@ -2,7 +2,7 @@
   "libraryId": "lib-3-ecosystem-intake",
   "name": "Skills Library 3 - Ecosystem Intake",
   "version": "0.1.0",
-  "description": "Open-source intake map and non-overlap launch constraints.",
+  "description": "Non-overlap launch constraints and future intake directions.",
   "skills": [],
   "excludedDirections": [
     {
@@ -32,22 +32,14 @@
   ],
   "openSourceCandidates": [
     {
-      "name": "crypto-liquidations-mcp",
-      "repo": "https://github.com/kukapay/crypto-liquidations-mcp",
-      "sourceTag": "github-intake",
-      "adaptation": "Adapt liquidation signal formatting and alert payloads."
+      "name": "Risk Module",
+      "sourceTag": "intake",
+      "adaptation": "Token risk and honeypot style checks for phase-2."
     },
     {
-      "name": "trading-signals-mcp",
-      "repo": "https://github.com/tripolskypetr/trading-signals-mcp",
-      "sourceTag": "github-intake",
-      "adaptation": "Use indicator pipeline for analysis-only skills."
-    },
-    {
-      "name": "bsc-honeypot-detector",
-      "repo": "https://github.com/mraicodedev/bsc-honeypot-detector",
-      "sourceTag": "github-intake",
-      "adaptation": "Integrate risk check outputs into SkillsBrain templates."
+      "name": "Liquidation Module",
+      "sourceTag": "intake",
+      "adaptation": "Derivatives liquidation signals for phase-2 alerts."
     }
   ]
 }

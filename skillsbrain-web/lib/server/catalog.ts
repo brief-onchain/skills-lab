@@ -18,7 +18,21 @@ interface LibraryFile {
   openSourceCandidates?: OpenSourceCandidate[];
 }
 
-const SKILLS_ROOT = path.join(process.cwd(), 'skills');
+function resolveSkillsRoot() {
+  const explicit = process.env.SKILLS_ROOT_PATH;
+  if (explicit && fs.existsSync(explicit)) {
+    return explicit;
+  }
+
+  const local = path.join(process.cwd(), 'skills');
+  if (fs.existsSync(local)) {
+    return local;
+  }
+
+  return path.resolve(process.cwd(), '..', 'skills');
+}
+
+const SKILLS_ROOT = resolveSkillsRoot();
 
 function readJson<T>(filePath: string): T {
   return JSON.parse(fs.readFileSync(filePath, 'utf8')) as T;
@@ -44,7 +58,12 @@ function listLibraryFiles() {
     .filter((p) => fs.existsSync(p));
 }
 
-function loadLibraries(): { libraries: SkillLibrary[]; skills: Skill[]; excludedDirections: ExcludedDirection[]; openSourceCandidates: OpenSourceCandidate[] } {
+function loadLibraries(): {
+  libraries: SkillLibrary[];
+  skills: Skill[];
+  excludedDirections: ExcludedDirection[];
+  openSourceCandidates: OpenSourceCandidate[];
+} {
   const files = listLibraryFiles();
 
   const libraries: SkillLibrary[] = [];
@@ -79,7 +98,10 @@ function loadLibraries(): { libraries: SkillLibrary[]; skills: Skill[]; excluded
     libraries,
     skills,
     excludedDirections: dedupeBy(excludedDirections, (x) => x.slug),
-    openSourceCandidates: dedupeBy(openSourceCandidates, (x) => x.repo)
+    openSourceCandidates: dedupeBy(
+      openSourceCandidates,
+      (x) => `${x.name}|${x.sourceTag}|${x.adaptation}`
+    )
   };
 }
 
@@ -98,4 +120,9 @@ export function loadCatalogPayload(): CatalogPayload {
 export function loadSkillIds(): Set<string> {
   const payload = loadCatalogPayload();
   return new Set(payload.skills.map((x) => x.id));
+}
+
+export function getSkillById(skillId: string): Skill | null {
+  const payload = loadCatalogPayload();
+  return payload.skills.find((x) => x.id === skillId) || null;
 }
