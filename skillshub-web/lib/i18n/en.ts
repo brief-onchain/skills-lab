@@ -93,7 +93,7 @@ const en = {
   lang: {
     switchLabel: 'EN / 中',
   },
-} as const;
+};
 
 export type TranslationKeys = typeof en;
 export default en;

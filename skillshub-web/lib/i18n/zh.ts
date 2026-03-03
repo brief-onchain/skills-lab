@@ -95,6 +95,6 @@ const zh: TranslationKeys = {
   lang: {
     switchLabel: 'EN / 中',
   },
-} as const;
+};
 
 export default zh;
