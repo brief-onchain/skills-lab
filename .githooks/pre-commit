@@ -1,0 +1,43 @@
+#!/bin/sh
+set -eu
+
+staged_files="$(git diff --cached --name-only --diff-filter=ACMRTUXB)"
+[ -z "$staged_files" ] && exit 0
+
+# Block common sensitive filenames from being committed.
+blocked_name_regex='(^|/)(\.deploy_keys(/|$)|id_rsa(\.pub)?$|id_ed25519(\.pub)?$|.*\.(pem|key|p12|pfx|jks|crt|cer)$)'
+for file in $staged_files; do
+  case "$file" in
+    .env|*/.env|.env.*|*/.env.*)
+      case "$file" in
+        .env.example|*/.env.example) ;;
+        *)
+          echo "ERROR: blocked sensitive file in commit: $file"
+          echo "Use .env.example or move secrets outside the repository."
+          exit 1
+          ;;
+      esac
+      ;;
+  esac
+
+  if echo "$file" | grep -Eq "$blocked_name_regex"; then
+    echo "ERROR: blocked sensitive file in commit: $file"
+    echo "Use .env.example or move secrets outside the repository."
+    exit 1
+  fi
+done
+
+# Scan added lines for common secret patterns.
+added_lines="$(
+  git diff --cached --no-color --unified=0 \
+    | sed -n '/^\+\+\+/d; s/^+//p'
+)"
+
+secret_regex='(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9]{20,})'
+if [ -n "$added_lines" ] && echo "$added_lines" | grep -Eiq "$secret_regex"; then
+  echo "ERROR: potential secret detected in staged changes."
+  echo "Please remove secrets before commit."
+  exit 1
+fi
+
+exit 0

@@ -1,0 +1,15 @@
+[Unit]
+Description=SkillsBrain Web (Next.js)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/skillsbrain/skillsbrain-web
+EnvironmentFile=/opt/skillsbrain/skillsbrain-web/.env.production
+ExecStart=/usr/bin/npm run start -- -p 3000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

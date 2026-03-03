@@ -1,0 +1,9 @@
+{
+  "appName": "skillsbrain-web",
+  "mode": "gitops",
+  "serverAlias": "genkiai-new",
+  "remotePath": "/opt/skillsbrain/skillsbrain-web",
+  "serviceName": "skillsbrain-web",
+  "manualSshDeploy": false,
+  "updatedAt": "2026-03-03"
+}

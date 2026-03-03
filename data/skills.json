@@ -1,0 +1,152 @@
+{
+  "generatedAt": "2026-03-03",
+  "brand": "BSC Skiller Brain",
+  "exclusions": {
+    "source": "https://clawhub.ai/skills?sort=downloads&q=bsc",
+    "note": "Avoid direct overlap with currently visible q=bsc skills.",
+    "skills": [
+      {
+        "name": "Bitagent Skill",
+        "slug": "openclaw-bitagent",
+        "url": "https://clawhub.ai/parasyte-x/openclaw-bitagent"
+      },
+      {
+        "name": "BNB Chain NFT",
+        "slug": "bnb-nft",
+        "url": "https://clawhub.ai/CLAWZAI/bnb-nft"
+      },
+      {
+        "name": "Crypto Portfolio Tracker",
+        "slug": "crypto-portfolio-tracker",
+        "url": "https://clawhub.ai/Katrina-jpg/crypto-portfolio-tracker"
+      },
+      {
+        "name": "8004 Skill",
+        "slug": "8004-skill",
+        "url": "https://clawhub.ai/SpyderJR/8004-skill"
+      },
+      {
+        "name": "pancake skills",
+        "slug": "pancake-swap-skills",
+        "url": "https://clawhub.ai/KJ-Script/pancake-swap-skills"
+      },
+      {
+        "name": "FourMeme",
+        "slug": "four-meme-ai",
+        "url": "https://clawhub.ai/four-meme-community/four-meme-ai"
+      }
+    ]
+  },
+  "skills": [
+    {
+      "id": "price-snapshot",
+      "name": "Binance Price Snapshot",
+      "track": "quick-build",
+      "category": "Market Data",
+      "summary": "Pulls latest spot price + 24h stats for one symbol.",
+      "overlapPolicy": "No token launch, no NFT, no Pancake trading.",
+      "inputExample": {
+        "symbol": "BTCUSDT"
+      },
+      "install": {
+        "command": "npx @bsc-skills/price-snapshot",
+        "status": "planned"
+      }
+    },
+    {
+      "id": "top-movers",
+      "name": "Top Movers Radar",
+      "track": "quick-build",
+      "category": "Analytics",
+      "summary": "Ranks strongest/weakest movers in USDT pairs.",
+      "overlapPolicy": "Read-only scanner; no swap execution.",
+      "inputExample": {
+        "quoteAsset": "USDT",
+        "limit": 8
+      },
+      "install": {
+        "command": "npx @bsc-skills/top-movers-radar",
+        "status": "planned"
+      }
+    },
+    {
+      "id": "kline-brief",
+      "name": "Kline Brief",
+      "track": "quick-build",
+      "category": "Charts",
+      "summary": "Returns compact OHLC trend summary from recent candles.",
+      "overlapPolicy": "No portfolio tracking; market data only.",
+      "inputExample": {
+        "symbol": "BNBUSDT",
+        "interval": "15m",
+        "limit": 24
+      },
+      "install": {
+        "command": "npx @bsc-skills/kline-brief",
+        "status": "planned"
+      }
+    },
+    {
+      "id": "funding-watch",
+      "name": "Funding Watch",
+      "track": "quick-build",
+      "category": "Derivatives",
+      "summary": "Reads current futures funding and mark price for one symbol.",
+      "overlapPolicy": "No order placement, no futures execution.",
+      "inputExample": {
+        "symbol": "BTCUSDT"
+      },
+      "install": {
+        "command": "npx @bsc-skills/funding-watch",
+        "status": "planned"
+      }
+    },
+    {
+      "id": "symbol-status",
+      "name": "Symbol Status Checker",
+      "track": "quick-build",
+      "category": "Operations",
+      "summary": "Checks if a symbol is actively tradable and returns filters.",
+      "overlapPolicy": "No meme launch; exchange rules only.",
+      "inputExample": {
+        "symbol": "SOLUSDT"
+      },
+      "install": {
+        "command": "npx @bsc-skills/symbol-status-checker",
+        "status": "planned"
+      }
+    }
+  ],
+  "openSourceCandidates": [
+    {
+      "name": "binance-mcp-server (public data flavor)",
+      "repo": "https://github.com/danishashko/binance-mcp-server",
+      "why": "Read-only Spot API tools: ticker/search/orderbook/klines.",
+      "adaptPlan": "Strip account/trading tools, keep fast market-data endpoints for playground."
+    },
+    {
+      "name": "BinanceMCPServer",
+      "repo": "https://github.com/AnalyticAce/BinanceMCPServer",
+      "why": "Mature tool surface and good starter architecture.",
+      "adaptPlan": "Keep tool schema, replace execution layer with your API gateway."
+    },
+    {
+      "name": "trading-signals-mcp",
+      "repo": "https://github.com/tripolskypetr/trading-signals-mcp",
+      "why": "Indicator and multi-timeframe signal pipeline.",
+      "adaptPlan": "Use indicator transforms only, ship as analysis-only skill pack."
+    },
+    {
+      "name": "crypto-liquidations-mcp",
+      "repo": "https://github.com/kukapay/crypto-liquidations-mcp",
+      "why": "Real-time liquidation stream for volatility alert skills.",
+      "adaptPlan": "Add watchlists + alert formatting for your playground response cards."
+    },
+    {
+      "name": "bsc-honeypot-detector",
+      "repo": "https://github.com/mraicodedev/bsc-honeypot-detector",
+      "why": "Fast BSC token risk checks with multi-DEX liquidity simulation.",
+      "adaptPlan": "Package as a safety skill; exclude any swap execution workflow."
+    }
+  ]
+}

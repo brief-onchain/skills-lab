@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillsLab | Binance Skills Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="noise"></div>
+    <header class="topbar">
+      <div class="brand">SkillsLab<span>.com</span></div>
+      <div class="badge" id="healthBadge">Checking API...</div>
+    </header>
+
+    <main class="shell">
+      <section class="hero panel">
+        <p class="eyebrow">BINANCE SKILLS COLD START KIT</p>
+        <h1>黑金科技风 Skills Hub + Playground</h1>
+        <p class="lead">
+          先发起来，再迭代。当前版本内置非重合的 Binance/BSC 快速技能包，并支持直接接入你的 API 进行在线体验。
+        </p>
+        <div class="hero-actions">
+          <a href="#playground" class="btn primary">进入 Playground</a>
+          <a href="#oss" class="btn ghost">看开源改造候选</a>
+        </div>
+      </section>
+
+      <section class="grid-two">
+        <article class="panel">
+          <h2>不重合策略</h2>
+          <p class="muted">
+            已避开 clawhub q=bsc 下可见热门方向（NFT、Pancake 交易、meme 发币、组合追踪等），当前主打数据分析与风险观察类技能。
+          </p>
+          <ul id="excludedList" class="mini-list"></ul>
+        </article>
+
+        <article class="panel">
+          <h2>本地安装（npx）</h2>
+          <p class="muted">你们发包后，用户可直接在“龙虾本地环境”安装使用。</p>
+          <pre><code id="installHint">npx @bsc-skills/price-snapshot</code></pre>
+        </article>
+      </section>
+
+      <section class="panel" id="skills">
+        <div class="section-head">
+          <h2>Starter Skills Pack</h2>
+          <span class="tag">read-only / low-risk / fast ship</span>
+        </div>
+        <div id="skillsGrid" class="skills-grid"></div>
+      </section>
+
+      <section class="panel" id="playground">
+        <div class="section-head">
+          <h2>Playground</h2>
+          <span class="tag">API-ready</span>
+        </div>
+
+        <div class="play-grid">
+          <div>
+            <label for="skillSelect">Skill</label>
+            <select id="skillSelect"></select>
+          </div>
+          <div>
+            <label for="apiBase">API Base（可留空，走本地 fallback）</label>
+            <input id="apiBase" placeholder="https://your-api.example.com" />
+          </div>
+          <div>
+            <label for="apiPath">API Path</label>
+            <input id="apiPath" value="/skills/run" />
+          </div>
+          <div>
+            <label for="apiKey">API Key（可选）</label>
+            <input id="apiKey" placeholder="sk-..." />
+          </div>
+        </div>
+
+        <label for="skillInput">Input JSON</label>
+        <textarea id="skillInput" rows="9"></textarea>
+
+        <div class="hero-actions">
+          <button id="runBtn" class="btn primary">Run Skill</button>
+          <button id="useExampleBtn" class="btn ghost">使用示例参数</button>
+        </div>
+
+        <label>Result</label>
+        <pre><code id="resultBox">等待执行...</code></pre>
+      </section>
+
+      <section class="panel" id="oss">
+        <div class="section-head">
+          <h2>Open Source Intake（改造后上架）</h2>
+          <span class="tag">github curated</span>
+        </div>
+        <div id="ossGrid" class="skills-grid"></div>
+      </section>
+    </main>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>

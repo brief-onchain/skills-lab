@@ -1,0 +1,54 @@
+{
+  "sources": [
+    {
+      "sourceId": "github-danishashko-binance-mcp",
+      "repo": "https://github.com/danishashko/binance-mcp-server",
+      "localDoc": "skills/sources/binance-mcp-server.md",
+      "importStatus": "planned"
+    },
+    {
+      "sourceId": "github-analyticace-binance-mcp",
+      "repo": "https://github.com/AnalyticAce/BinanceMCPServer",
+      "localDoc": "skills/sources/binance-mcpserver-analyticace.md",
+      "importStatus": "planned"
+    },
+    {
+      "sourceId": "github-kukapay-liquidations",
+      "repo": "https://github.com/kukapay/crypto-liquidations-mcp",
+      "localDoc": "skills/sources/crypto-liquidations-mcp.md",
+      "importStatus": "planned"
+    },
+    {
+      "sourceId": "github-tripolskypetr-signals",
+      "repo": "https://github.com/tripolskypetr/trading-signals-mcp",
+      "localDoc": "skills/sources/trading-signals-mcp.md",
+      "importStatus": "planned"
+    },
+    {
+      "sourceId": "github-mraicodedev-honeypot",
+      "repo": "https://github.com/mraicodedev/bsc-honeypot-detector",
+      "localDoc": "skills/sources/bsc-honeypot-detector.md",
+      "importStatus": "planned"
+    },
+    {
+      "sourceId": "local-flap-bap578",
+      "repo": "local:/Users/klxhans/Downloads/flap-nfa-mint",
+      "localDoc": "skills/sources/flap-bap578-notes.md",
+      "importStatus": "active"
+    }
+  ],
+  "skillToSourceMap": [
+    { "skillId": "price-snapshot", "sourceIds": ["github-danishashko-binance-mcp"] },
+    { "skillId": "top-movers", "sourceIds": ["github-analyticace-binance-mcp"] },
+    { "skillId": "kline-brief", "sourceIds": ["github-danishashko-binance-mcp"] },
+    { "skillId": "funding-watch", "sourceIds": ["github-tripolskypetr-signals"] },
+    { "skillId": "open-interest-scan", "sourceIds": ["github-kukapay-liquidations"] },
+    { "skillId": "symbol-status", "sourceIds": ["github-danishashko-binance-mcp"] },
+    { "skillId": "bsc-rpc-fanout-check", "sourceIds": ["local-flap-bap578"] },
+    { "skillId": "bap578-adapter-blueprint", "sourceIds": ["local-flap-bap578"] },
+    { "skillId": "bap578-vault-checklist", "sourceIds": ["local-flap-bap578"] },
+    { "skillId": "bap578-deploy-plan", "sourceIds": ["local-flap-bap578"] },
+    { "skillId": "bap578-test-template", "sourceIds": ["local-flap-bap578"] },
+    { "skillId": "bap578-contract-idea-sprint", "sourceIds": ["local-flap-bap578"] }
+  ]
+}

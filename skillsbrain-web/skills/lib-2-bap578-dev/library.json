@@ -1,0 +1,75 @@
+{
+  "libraryId": "lib-2-bap578-dev",
+  "name": "Skills Library 2 - BAP578 Dev",
+  "version": "0.1.0",
+  "description": "Simple BAP578 contract/dev helper skills based on local flap-nfa-mint patterns.",
+  "skills": [
+    {
+      "id": "bap578-adapter-blueprint",
+      "name": "BAP578 Adapter Blueprint",
+      "description": "Generates a simple adapter contract blueprint for token-bound agent accounts.",
+      "category": "BAP578 Dev",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "guide",
+      "inputExample": { "contractName": "MyBAP578Adapter", "nfaInterface": "INFAOwner" },
+      "installCommand": "npx @skillsbrain/bap578-adapter-blueprint",
+      "sourceRef": "flap-nfa-mint/contracts/arena/FlapBAP578Adapter.sol"
+    },
+    {
+      "id": "bap578-vault-checklist",
+      "name": "BAP578 Vault Checklist",
+      "description": "Outputs a concise checklist for vault-controller and operator safety.",
+      "category": "BAP578 Dev",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "guide",
+      "inputExample": { "includeTokenFlows": true },
+      "installCommand": "npx @skillsbrain/bap578-vault-checklist",
+      "sourceRef": "flap-nfa-mint/contracts/arena/FlapBAP578Adapter.sol"
+    },
+    {
+      "id": "bap578-deploy-plan",
+      "name": "BAP578 Deploy Plan",
+      "description": "Builds a deploy+verify execution plan from environment variables.",
+      "category": "BAP578 Dev",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "guide",
+      "inputExample": { "network": "bsc-mainnet" },
+      "installCommand": "npx @skillsbrain/bap578-deploy-plan",
+      "sourceRef": "flap-nfa-mint/scripts/deploy-arena.js"
+    },
+    {
+      "id": "bap578-test-template",
+      "name": "BAP578 Test Template",
+      "description": "Generates Hardhat test skeleton for adapter + vault flows.",
+      "category": "BAP578 Dev",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "guide",
+      "inputExample": { "tokenId": 1, "includeFeeOnTransferCase": true },
+      "installCommand": "npx @skillsbrain/bap578-test-template",
+      "sourceRef": "flap-nfa-mint/test/ArenaFlow.test.js"
+    },
+    {
+      "id": "bap578-contract-idea-sprint",
+      "name": "BAP578 Contract Idea Sprint",
+      "description": "Turns a product idea into a minimal BAP578 contract task list.",
+      "category": "BAP578 Dev",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "guide",
+      "inputExample": { "idea": "Agent escrow for on-chain game rewards" },
+      "installCommand": "npx @skillsbrain/bap578-contract-idea-sprint"
+    }
+  ],
+  "openSourceCandidates": [
+    {
+      "name": "Local flap-nfa-mint",
+      "repo": "local:/Users/klxhans/Downloads/flap-nfa-mint",
+      "sourceTag": "local-source",
+      "adaptation": "Use adapter/deploy/test patterns as fast BAP578 skills templates."
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "libraryId": "lib-1-binance-market",
+  "name": "Skills Library 1 - Binance Market",
+  "version": "0.1.0",
+  "description": "Read-only market and derivatives data skills.",
+  "skills": [
+    {
+      "id": "price-snapshot",
+      "name": "Price Snapshot",
+      "description": "Fetches spot last price and 24h change for one trading pair.",
+      "category": "Market Data",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "symbol": "BTCUSDT" },
+      "installCommand": "npx @skillsbrain/price-snapshot",
+      "originRepo": "https://github.com/danishashko/binance-mcp-server"
+    },
+    {
+      "id": "top-movers",
+      "name": "Top Movers Radar",
+      "description": "Ranks strongest gainers by quote asset across spot pairs.",
+      "category": "Analytics",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "quoteAsset": "USDT", "limit": 10 },
+      "installCommand": "npx @skillsbrain/top-movers-radar",
+      "originRepo": "https://github.com/AnalyticAce/BinanceMCPServer"
+    },
+    {
+      "id": "kline-brief",
+      "name": "Kline Brief",
+      "description": "Summarizes recent candles with trend percentage.",
+      "category": "Charts",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "symbol": "BNBUSDT", "interval": "15m", "limit": 24 },
+      "installCommand": "npx @skillsbrain/kline-brief",
+      "originRepo": "https://github.com/danishashko/binance-mcp-server"
+    },
+    {
+      "id": "funding-watch",
+      "name": "Funding Watch",
+      "description": "Reads current funding, mark price and next funding time.",
+      "category": "Derivatives",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "symbol": "BTCUSDT" },
+      "installCommand": "npx @skillsbrain/funding-watch",
+      "originRepo": "https://github.com/tripolskypetr/trading-signals-mcp"
+    },
+    {
+      "id": "open-interest-scan",
+      "name": "Open Interest Scan",
+      "description": "Queries futures open interest for a symbol.",
+      "category": "Derivatives",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "symbol": "ETHUSDT" },
+      "installCommand": "npx @skillsbrain/open-interest-scan",
+      "originRepo": "https://github.com/kukapay/crypto-liquidations-mcp"
+    },
+    {
+      "id": "symbol-status",
+      "name": "Symbol Status Checker",
+      "description": "Checks trading status and filters from exchangeInfo.",
+      "category": "Operations",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "symbol": "SOLUSDT" },
+      "installCommand": "npx @skillsbrain/symbol-status-checker"
+    },
+    {
+      "id": "bsc-rpc-fanout-check",
+      "name": "BSC RPC Fanout Check",
+      "description": "Benchmarks configured BSC RPC endpoints and returns fastest node.",
+      "category": "Infrastructure",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "sampleSize": 3 },
+      "installCommand": "npx @skillsbrain/bsc-rpc-fanout-check"
+    }
+  ],
+  "openSourceCandidates": [
+    {
+      "name": "binance-mcp-server",
+      "repo": "https://github.com/danishashko/binance-mcp-server",
+      "sourceTag": "github-intake",
+      "adaptation": "Keep read-only market data tools and remove mutation tools."
+    },
+    {
+      "name": "BinanceMCPServer",
+      "repo": "https://github.com/AnalyticAce/BinanceMCPServer",
+      "sourceTag": "github-intake",
+      "adaptation": "Reuse tool contracts and route through SkillsBrain API."
+    }
+  ]
+}

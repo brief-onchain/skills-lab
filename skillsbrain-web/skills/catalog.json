@@ -1,0 +1,209 @@
+{
+  "generatedAt": "2026-03-03T00:00:00.000Z",
+  "excludedDirections": [
+    {
+      "slug": "openclaw-bitagent",
+      "note": "Launch phase avoids token launch/bonding-curve overlap."
+    },
+    {
+      "slug": "bnb-nft",
+      "note": "Launch phase avoids generic NFT operation overlap."
+    },
+    {
+      "slug": "crypto-portfolio-tracker",
+      "note": "Portfolio tracker kept in phase-2 backlog."
+    },
+    {
+      "slug": "8004-skill",
+      "note": "Identity-registry track kept in phase-2 backlog."
+    },
+    {
+      "slug": "pancake-swap-skills",
+      "note": "No direct swap execution in first release."
+    },
+    {
+      "slug": "four-meme-ai",
+      "note": "No meme token launch workflow in first release."
+    }
+  ],
+  "openSourceCandidates": [
+    {
+      "name": "binance-mcp-server",
+      "repo": "https://github.com/danishashko/binance-mcp-server",
+      "sourceTag": "github-intake",
+      "adaptation": "Keep read-only market data tools and remove mutation tools.",
+      "localMirrorPath": "skills/sources/binance-mcp-server.md"
+    },
+    {
+      "name": "BinanceMCPServer",
+      "repo": "https://github.com/AnalyticAce/BinanceMCPServer",
+      "sourceTag": "github-intake",
+      "adaptation": "Reuse tool contracts and route through SkillsBrain API.",
+      "localMirrorPath": "skills/sources/binance-mcpserver-analyticace.md"
+    },
+    {
+      "name": "crypto-liquidations-mcp",
+      "repo": "https://github.com/kukapay/crypto-liquidations-mcp",
+      "sourceTag": "github-intake",
+      "adaptation": "Adapt liquidation signal formatting and alert payloads.",
+      "localMirrorPath": "skills/sources/crypto-liquidations-mcp.md"
+    },
+    {
+      "name": "trading-signals-mcp",
+      "repo": "https://github.com/tripolskypetr/trading-signals-mcp",
+      "sourceTag": "github-intake",
+      "adaptation": "Use indicator pipeline for analysis-only skills.",
+      "localMirrorPath": "skills/sources/trading-signals-mcp.md"
+    },
+    {
+      "name": "bsc-honeypot-detector",
+      "repo": "https://github.com/mraicodedev/bsc-honeypot-detector",
+      "sourceTag": "github-intake",
+      "adaptation": "Integrate risk check outputs into SkillsBrain templates.",
+      "localMirrorPath": "skills/sources/bsc-honeypot-detector.md"
+    }
+  ],
+  "skills": [
+    {
+      "id": "price-snapshot",
+      "name": "Price Snapshot",
+      "description": "Fetches spot last price and 24h change for one trading pair.",
+      "category": "Market Data",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "symbol": "BTCUSDT" },
+      "installCommand": "npx @skillsbrain/price-snapshot",
+      "originRepo": "https://github.com/danishashko/binance-mcp-server"
+    },
+    {
+      "id": "top-movers",
+      "name": "Top Movers Radar",
+      "description": "Ranks strongest gainers by quote asset across spot pairs.",
+      "category": "Analytics",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "quoteAsset": "USDT", "limit": 10 },
+      "installCommand": "npx @skillsbrain/top-movers-radar",
+      "originRepo": "https://github.com/AnalyticAce/BinanceMCPServer"
+    },
+    {
+      "id": "kline-brief",
+      "name": "Kline Brief",
+      "description": "Summarizes recent candles with trend percentage.",
+      "category": "Charts",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "symbol": "BNBUSDT", "interval": "15m", "limit": 24 },
+      "installCommand": "npx @skillsbrain/kline-brief",
+      "originRepo": "https://github.com/danishashko/binance-mcp-server"
+    },
+    {
+      "id": "funding-watch",
+      "name": "Funding Watch",
+      "description": "Reads current funding, mark price and next funding time.",
+      "category": "Derivatives",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "symbol": "BTCUSDT" },
+      "installCommand": "npx @skillsbrain/funding-watch",
+      "originRepo": "https://github.com/tripolskypetr/trading-signals-mcp"
+    },
+    {
+      "id": "open-interest-scan",
+      "name": "Open Interest Scan",
+      "description": "Queries futures open interest for a symbol.",
+      "category": "Derivatives",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "symbol": "ETHUSDT" },
+      "installCommand": "npx @skillsbrain/open-interest-scan",
+      "originRepo": "https://github.com/kukapay/crypto-liquidations-mcp"
+    },
+    {
+      "id": "symbol-status",
+      "name": "Symbol Status Checker",
+      "description": "Checks trading status and filters from exchangeInfo.",
+      "category": "Operations",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "symbol": "SOLUSDT" },
+      "installCommand": "npx @skillsbrain/symbol-status-checker"
+    },
+    {
+      "id": "bsc-rpc-fanout-check",
+      "name": "BSC RPC Fanout Check",
+      "description": "Benchmarks configured BSC RPC endpoints and returns fastest node.",
+      "category": "Infrastructure",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "live",
+      "inputExample": { "sampleSize": 3 },
+      "installCommand": "npx @skillsbrain/bsc-rpc-fanout-check"
+    },
+    {
+      "id": "bap578-adapter-blueprint",
+      "name": "BAP578 Adapter Blueprint",
+      "description": "Generates a simple adapter contract blueprint for token-bound agent accounts.",
+      "category": "BAP578 Dev",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "guide",
+      "inputExample": { "contractName": "MyBAP578Adapter", "nfaInterface": "INFAOwner" },
+      "installCommand": "npx @skillsbrain/bap578-adapter-blueprint",
+      "sourceRef": "flap-nfa-mint/contracts/arena/FlapBAP578Adapter.sol"
+    },
+    {
+      "id": "bap578-vault-checklist",
+      "name": "BAP578 Vault Checklist",
+      "description": "Outputs a concise checklist for vault-controller and operator safety.",
+      "category": "BAP578 Dev",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "guide",
+      "inputExample": { "includeTokenFlows": true },
+      "installCommand": "npx @skillsbrain/bap578-vault-checklist",
+      "sourceRef": "flap-nfa-mint/contracts/arena/FlapBAP578Adapter.sol"
+    },
+    {
+      "id": "bap578-deploy-plan",
+      "name": "BAP578 Deploy Plan",
+      "description": "Builds a deploy+verify execution plan from environment variables.",
+      "category": "BAP578 Dev",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "guide",
+      "inputExample": { "network": "bsc-mainnet" },
+      "installCommand": "npx @skillsbrain/bap578-deploy-plan",
+      "sourceRef": "flap-nfa-mint/scripts/deploy-arena.js"
+    },
+    {
+      "id": "bap578-test-template",
+      "name": "BAP578 Test Template",
+      "description": "Generates Hardhat test skeleton for adapter + vault flows.",
+      "category": "BAP578 Dev",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "guide",
+      "inputExample": { "tokenId": 1, "includeFeeOnTransferCase": true },
+      "installCommand": "npx @skillsbrain/bap578-test-template",
+      "sourceRef": "flap-nfa-mint/test/ArenaFlow.test.js"
+    },
+    {
+      "id": "bap578-contract-idea-sprint",
+      "name": "BAP578 Contract Idea Sprint",
+      "description": "Turns a product idea into a minimal BAP578 contract task list.",
+      "category": "BAP578 Dev",
+      "version": "0.1.0",
+      "author": "skillsbrain",
+      "mode": "guide",
+      "inputExample": { "idea": "Agent escrow for on-chain game rewards" },
+      "installCommand": "npx @skillsbrain/bap578-contract-idea-sprint"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "libraryId": "lib-3-ecosystem-intake",
+  "name": "Skills Library 3 - Ecosystem Intake",
+  "version": "0.1.0",
+  "description": "Open-source intake map and non-overlap launch constraints.",
+  "skills": [],
+  "excludedDirections": [
+    {
+      "slug": "openclaw-bitagent",
+      "note": "Launch phase avoids token launch/bonding-curve overlap."
+    },
+    {
+      "slug": "bnb-nft",
+      "note": "Launch phase avoids generic NFT operation overlap."
+    },
+    {
+      "slug": "crypto-portfolio-tracker",
+      "note": "Portfolio tracker kept in phase-2 backlog."
+    },
+    {
+      "slug": "8004-skill",
+      "note": "Identity-registry track kept in phase-2 backlog."
+    },
+    {
+      "slug": "pancake-swap-skills",
+      "note": "No direct swap execution in first release."
+    },
+    {
+      "slug": "four-meme-ai",
+      "note": "No meme token launch workflow in first release."
+    }
+  ],
+  "openSourceCandidates": [
+    {
+      "name": "crypto-liquidations-mcp",
+      "repo": "https://github.com/kukapay/crypto-liquidations-mcp",
+      "sourceTag": "github-intake",
+      "adaptation": "Adapt liquidation signal formatting and alert payloads."
+    },
+    {
+      "name": "trading-signals-mcp",
+      "repo": "https://github.com/tripolskypetr/trading-signals-mcp",
+      "sourceTag": "github-intake",
+      "adaptation": "Use indicator pipeline for analysis-only skills."
+    },
+    {
+      "name": "bsc-honeypot-detector",
+      "repo": "https://github.com/mraicodedev/bsc-honeypot-detector",
+      "sourceTag": "github-intake",
+      "adaptation": "Integrate risk check outputs into SkillsBrain templates."
+    }
+  ]
+}
