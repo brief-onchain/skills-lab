@@ -1,4 +1,5 @@
 import { loadSkillIds } from '@/lib/server/catalog';
+import { getLlmConfig } from '@/lib/server/env';
 import type { PlaygroundRequest, PlaygroundResponse } from '@/lib/types';
 
 function normalizeSymbol(value: unknown, fallback = 'BTCUSDT') {
@@ -22,6 +23,76 @@ async function fetchJson(url: string, timeoutMs = 4500) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+async function runAiQuickChat(input: Record<string, unknown>) {
+  const llm = getLlmConfig();
+  if (!llm.apiKey) {
+    throw new Error(
+      'Missing LLM API key. Set OPENROUTER_API_KEY (or OPENAI_API_KEY/AI_API_KEY) in server env.'
+    );
+  }
+
+  const prompt = String(input.prompt || input.message || '只回复一句: AI通了').trim();
+  if (!prompt) {
+    throw new Error('prompt is required');
+  }
+
+  const endpoint = `${llm.apiBase.replace(/\/$/, '')}/chat/completions`;
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${llm.apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: llm.model,
+      temperature: 0.2,
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You are a concise SkillsHub verification assistant. Reply in the same language as the user.'
+        },
+        { role: 'user', content: prompt }
+      ]
+    })
+  });
+
+  const raw = await response.text();
+  let parsed: any;
+  try {
+    parsed = raw ? JSON.parse(raw) : {};
+  } catch {
+    parsed = {};
+  }
+
+  if (!response.ok) {
+    const msg =
+      parsed?.error?.message ||
+      parsed?.error ||
+      `LLM API failed with status ${response.status}`;
+    throw new Error(String(msg));
+  }
+
+  let reply = parsed?.choices?.[0]?.message?.content;
+  if (Array.isArray(reply)) {
+    reply = reply
+      .map((part: any) => (typeof part?.text === 'string' ? part.text : ''))
+      .join('')
+      .trim();
+  }
+
+  if (!reply || typeof reply !== 'string') {
+    throw new Error('LLM response missing message content');
+  }
+
+  return {
+    provider: 'openrouter-compatible',
+    model: llm.model,
+    prompt,
+    reply
+  };
 }
 
 function fallbackPriceSnapshot(symbol: string) {
@@ -233,6 +304,10 @@ function bap578IdeaSprint(input: Record<string, unknown>) {
 
 async function runLocalSkill(skillId: string, input: Record<string, unknown>) {
   switch (skillId) {
+    case 'ai-quick-chat': {
+      return runAiQuickChat(input);
+    }
+
     case 'price-snapshot': {
       const symbol = normalizeSymbol(input.symbol);
       let ticker: any;

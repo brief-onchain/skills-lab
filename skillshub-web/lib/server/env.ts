@@ -74,19 +74,41 @@ export function getApiConfig() {
       process.env.SKILLS_API_BASE ||
       process.env.AI_API_BASE ||
       process.env.OPENAI_BASE_URL ||
+      process.env.OPENROUTER_BASE_URL ||
       '',
     apiPath: process.env.SKILLS_API_PATH || '/skills/run',
     apiKey:
       process.env.SKILLS_API_KEY ||
       process.env.AI_API_KEY ||
       process.env.OPENAI_API_KEY ||
+      process.env.OPENROUTER_API_KEY ||
       process.env.GEMINI_API_KEY ||
       '',
     model:
       process.env.SKILLS_API_MODEL ||
       process.env.OPENAI_MODEL ||
+      process.env.OPENROUTER_MODEL ||
       process.env.GEMINI_MODEL ||
       'gpt-4.1-mini'
+  };
+}
+
+export function getLlmConfig() {
+  return {
+    apiBase:
+      process.env.OPENAI_BASE_URL ||
+      process.env.OPENROUTER_BASE_URL ||
+      'https://openrouter.ai/api/v1',
+    apiKey:
+      process.env.OPENAI_API_KEY ||
+      process.env.AI_API_KEY ||
+      process.env.OPENROUTER_API_KEY ||
+      '',
+    model:
+      process.env.OPENAI_MODEL ||
+      process.env.OPENROUTER_MODEL ||
+      process.env.SKILLS_API_MODEL ||
+      'openai/gpt-4o-mini'
   };
 }
 

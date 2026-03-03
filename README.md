@@ -7,6 +7,7 @@
 ```bash
 npx @skillshub/price-snapshot
 npx @skillshub/top-movers-radar
+npx @skillshub/ai-quick-chat
 npx @skillshub/bap578-adapter-blueprint
 ```
 
@@ -30,6 +31,7 @@ npx @skillshub/price-snapshot
 ```bash
 npx @skillshub/price-snapshot
 npx @skillshub/top-movers-radar
+npx @skillshub/ai-quick-chat
 npx @skillshub/kline-brief
 npx @skillshub/symbol-status
 npx @skillshub/funding-watch

@@ -5,6 +5,19 @@
   "description": "Production-useful market skills for launch.",
   "skills": [
     {
+      "id": "ai-quick-chat",
+      "name": "AI Quick Chat",
+      "description": "Sends a short prompt to OpenRouter-compatible LLM for capability verification.",
+      "category": "AI Verify",
+      "version": "0.1.0",
+      "author": "skillshub",
+      "mode": "live",
+      "inputExample": {
+        "prompt": "只回复一句：AI通了"
+      },
+      "installCommand": "npx @skillshub/ai-quick-chat"
+    },
+    {
       "id": "price-snapshot",
       "name": "Price Snapshot",
       "description": "Fetches spot last price and 24h range for one trading pair.",
