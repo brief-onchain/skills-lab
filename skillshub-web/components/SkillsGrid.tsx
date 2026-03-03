@@ -10,6 +10,7 @@ import { staggerReveal, hoverLift } from '@/lib/animations';
 export default function SkillsGrid() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const repoBase = process.env.NEXT_PUBLIC_SKILLS_GITHUB_REPO || '';
 
   useEffect(() => {
     ApiClient.getSkills().then(setSkills);
@@ -17,9 +18,10 @@ export default function SkillsGrid() {
 
   useEffect(() => {
     if (skills.length > 0 && containerRef.current) {
+      const trigger = containerRef.current || undefined;
       const ctx = gsap.context(() => {
         const cards = gsap.utils.toArray<HTMLElement>('.skill-card');
-        staggerReveal(cards, containerRef.current);
+        staggerReveal(cards, trigger);
         cards.forEach(card => hoverLift(card));
       }, containerRef);
       return () => ctx.revert();
@@ -35,7 +37,7 @@ export default function SkillsGrid() {
               STARTER SKILLS PACK
             </h2>
             <p className="text-text-sub max-w-xl">
-              精选首发技能模组，即插即用。为开发者提供标准化的链上交互范式。
+              Production-ready skill modules with standardized interfaces. Install, configure, and run in minutes.
             </p>
           </div>
           <div className="text-right hidden md:block">
@@ -45,11 +47,17 @@ export default function SkillsGrid() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {skills.map((skill) => (
-            <div 
-              key={skill.id}
-              className="skill-card p-8 bg-panel border border-gold/10 relative group overflow-hidden opacity-0"
-            >
+          {skills.map((skill) => {
+            const repoUrl =
+              repoBase && skill.repoPath
+                ? `${repoBase.replace(/\/$/, '')}/tree/main/${skill.repoPath}`
+                : '';
+
+            return (
+              <div 
+                key={skill.id}
+                className="skill-card p-8 bg-panel border border-gold/10 relative group overflow-hidden opacity-0"
+              >
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor" className="text-gold">
                   <path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/>
@@ -79,6 +87,16 @@ export default function SkillsGrid() {
                   {skill.installCommand || ''}
                 </span>
                 <div className="flex items-center gap-3">
+                  {repoUrl ? (
+                    <a
+                      href={repoUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-gold text-sm font-bold hover:text-white transition-colors"
+                    >
+                      GITHUB
+                    </a>
+                  ) : null}
                   <Link
                     href={`/skills/${skill.id}`}
                     className="text-gold text-sm font-bold hover:text-white transition-colors"
@@ -97,7 +115,8 @@ export default function SkillsGrid() {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

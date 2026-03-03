@@ -1,4 +1,4 @@
-# SkillsBrain Web
+# SkillsHub Web
 
 Next.js + GSAP frontend with built-in backend APIs for Binance/BSC skill playground.
 
@@ -19,27 +19,22 @@ Skills are organized as:
 - `../skills/lib-1-binance-market/library.json`
 - `../skills/lib-2-bap578-dev/library.json`
 - `../skills/lib-3-ecosystem-intake/library.json`
+- `../skills/lib-*/skills/<skill-id>/SKILL.md`
 
 Backend aggregates all `../skills/lib-*/library.json` files dynamically.
 
 ## Install Skills (npx)
 
 ```bash
-npx @skillsbrain/price-snapshot
-npx @skillsbrain/top-movers-radar
-npx @skillsbrain/kline-brief
-npx @skillsbrain/funding-watch
-npx @skillsbrain/open-interest-scan
-npx @skillsbrain/symbol-status-checker
-npx @skillsbrain/bsc-rpc-fanout-check
-npx @skillsbrain/bap578-adapter-blueprint
-npx @skillsbrain/bap578-vault-checklist
-npx @skillsbrain/bap578-deploy-plan
-npx @skillsbrain/bap578-test-template
-npx @skillsbrain/bap578-contract-idea-sprint
+npx @skillshub/price-snapshot
+npx @skillshub/top-movers-radar
+npx @skillshub/kline-brief
+npx @skillshub/symbol-status
+npx @skillshub/funding-watch
+npx @skillshub/bap578-adapter-blueprint
 ```
 
-Note: these package names are the SkillsBrain naming plan; publish to npm under the same names before public installation.
+Current launch build exposes 12 skills (market + BAP578 dev helpers + backlog placeholders).
 
 ## Environment
 
@@ -76,12 +71,12 @@ Local memory files:
 
 Infra templates kept in repo:
 
-- `deploy/skillsbrain-web.service`
-- `deploy/nginx.skillsbrain.conf`
+- `deploy/skillshub-web.service`
+- `deploy/nginx.skillshub.conf`
 
 Remote path convention:
 
-- `/opt/skillsbrain/skillsbrain-web`
+- `/opt/skillshub/skillshub-web`
 
 ## Notes
 

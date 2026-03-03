@@ -10,10 +10,16 @@ interface Props {
 
 export default function SkillDetailPage({ params }: Props) {
   const skill = getSkillById(params.id);
+  const repoBase = process.env.NEXT_PUBLIC_SKILLS_GITHUB_REPO || '';
 
   if (!skill) {
     notFound();
   }
+
+  const githubUrl =
+    repoBase && skill.repoPath
+      ? `${repoBase.replace(/\/$/, '')}/tree/main/${skill.repoPath}`
+      : '';
 
   return (
     <main className="min-h-screen bg-bg text-text-main">
@@ -39,7 +45,7 @@ export default function SkillDetailPage({ params }: Props) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="p-5 bg-bg border border-white/10 rounded-lg">
               <h2 className="text-gold font-mono text-xs uppercase tracking-wider mb-3">Install Command</h2>
-              <pre className="text-sm font-mono overflow-x-auto">{skill.installCommand || 'npx @skillsbrain/your-skill'}</pre>
+              <pre className="text-sm font-mono overflow-x-auto">{skill.installCommand || 'npx @skillshub/your-skill'}</pre>
             </div>
 
             <div className="p-5 bg-bg border border-white/10 rounded-lg">
@@ -57,6 +63,16 @@ export default function SkillDetailPage({ params }: Props) {
             >
               Try in Playground
             </Link>
+            {githubUrl ? (
+              <a
+                href={githubUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="px-5 py-3 border border-gold/30 text-gold rounded hover:border-gold transition-colors"
+              >
+                Open in GitHub
+              </a>
+            ) : null}
             <Link
               href="/"
               className="px-5 py-3 border border-gold/30 text-gold rounded hover:border-gold transition-colors"

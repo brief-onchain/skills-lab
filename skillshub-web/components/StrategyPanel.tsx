@@ -18,9 +18,10 @@ export default function StrategyPanel() {
   }, []);
 
   useEffect(() => {
+    const trigger = containerRef.current || undefined;
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>('.strategy-card');
-      staggerReveal(cards, containerRef.current);
+      staggerReveal(cards, trigger);
     }, containerRef);
     return () => ctx.revert();
   }, []);
@@ -33,7 +34,7 @@ export default function StrategyPanel() {
             DIFFERENTIATED LAUNCH TRACKS
           </h2>
           <p className="text-text-sub font-mono text-sm">
-            首发先错位，不做同款；后续按热度补齐 Phase-2
+            Skills excluded from the initial launch to maintain differentiation. Planned for Phase-2.
           </p>
         </div>
 

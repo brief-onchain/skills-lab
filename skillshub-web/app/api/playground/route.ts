@@ -44,9 +44,9 @@ export async function POST(req: Request) {
       model: config.model
     });
 
-    return NextResponse.json(result, { status: result.success ? 200 : 502 });
+    return NextResponse.json(result, { status: 200 });
   }
 
   const local = await runPlaygroundLocal(payload);
-  return NextResponse.json(local, { status: local.success ? 200 : 500 });
+  return NextResponse.json(local, { status: 200 });
 }

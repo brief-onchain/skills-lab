@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 export default function InstallGuide() {
   const [copied, setCopied] = useState(false);
-  const command = "npx skillsbrain init";
+  const command = "npx @skillshub/price-snapshot --symbol BTCUSDT";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(command);
@@ -23,7 +23,7 @@ export default function InstallGuide() {
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-50" />
           
           <p className="text-text-sub mb-6">
-            Ready to create your own skills? Initialize a new project in seconds.
+            Every skill runs standalone via npx. No setup required — just pick a module and go.
           </p>
           
           <div 
@@ -41,15 +41,15 @@ export default function InstallGuide() {
           <div className="mt-8 grid grid-cols-3 gap-4 text-center">
             <div className="p-4 border border-white/5 rounded">
               <div className="text-gold font-bold text-xl mb-1">01</div>
-              <div className="text-xs text-text-sub">Install CLI</div>
+              <div className="text-xs text-text-sub">Pick Skill</div>
             </div>
             <div className="p-4 border border-white/5 rounded">
               <div className="text-gold font-bold text-xl mb-1">02</div>
-              <div className="text-xs text-text-sub">Create Skill</div>
+              <div className="text-xs text-text-sub">Run with npx</div>
             </div>
             <div className="p-4 border border-white/5 rounded">
               <div className="text-gold font-bold text-xl mb-1">03</div>
-              <div className="text-xs text-text-sub">Publish</div>
+              <div className="text-xs text-text-sub">Fork & Extend</div>
             </div>
           </div>
         </div>

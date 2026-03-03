@@ -83,10 +83,17 @@ function loadLibraries(): {
     });
 
     for (const skill of parsed.skills || []) {
+      const skillDir = path.join(path.dirname(file), 'skills', skill.id);
+      const repoRoot = path.resolve(process.cwd(), '..');
+      const repoPath = fs.existsSync(skillDir)
+        ? path.relative(repoRoot, skillDir).split(path.sep).join('/')
+        : undefined;
+
       skills.push({
         ...skill,
         libraryId: parsed.libraryId,
-        libraryName: parsed.name
+        libraryName: parsed.name,
+        repoPath
       });
     }
 

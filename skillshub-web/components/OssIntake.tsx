@@ -19,7 +19,7 @@ export default function OssIntake() {
         <div className="flex flex-col md:flex-row items-center justify-between mb-12">
           <div>
             <h2 className="text-3xl font-heading font-bold text-text-main mb-2">OPEN SOURCE INTAKE</h2>
-            <p className="text-text-sub">Contribute to the ecosystem. Fork, modify, deploy.</p>
+            <p className="text-text-sub">Curated open-source projects being adapted for the BSC skill ecosystem.</p>
           </div>
         </div>
 

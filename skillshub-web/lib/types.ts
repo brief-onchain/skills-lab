@@ -10,6 +10,7 @@ export interface Skill {
   installCommand?: string;
   libraryId?: string;
   libraryName?: string;
+  repoPath?: string;
 }
 
 export interface PlaygroundRequest {

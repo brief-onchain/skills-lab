@@ -53,9 +53,9 @@ export default function Hero() {
           ref={subtitleRef}
           className="max-w-2xl mx-auto text-text-sub text-lg md:text-xl mb-10 leading-relaxed opacity-0"
         >
-          构建下一代链上智能。避开同质化竞争，探索高价值技能。
+          Modular on-chain skills for the Binance Smart Chain ecosystem.
           <br className="hidden md:block" />
-          先上线抢占热度，再逐步扩展生态边界。
+          Build, test, and deploy — all from one hub.
         </p>
 
         <div 
@@ -73,7 +73,7 @@ export default function Hero() {
             href="#install"
             className="px-8 py-4 bg-transparent border border-gold/30 hover:border-gold text-gold font-mono rounded transition-colors w-full md:w-auto"
           >
-            $ npx skillsbrain init
+            $ npx @skillshub/price-snapshot
           </a>
         </div>
       </div>

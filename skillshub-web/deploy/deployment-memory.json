@@ -1,0 +1,9 @@
+{
+  "appName": "skillshub-web",
+  "mode": "gitops",
+  "serverAlias": "genkiai-new",
+  "remotePath": "/opt/skillshub/skillshub-web",
+  "serviceName": "skillshub-web",
+  "manualSshDeploy": false,
+  "updatedAt": "2026-03-03"
+}

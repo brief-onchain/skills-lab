@@ -87,7 +87,7 @@ export default function Playground() {
             SKILL PLAYGROUND
           </h2>
           <p className="text-text-sub">
-            在线调试技能参数，实时预览输出结果
+            Configure parameters, execute skills, and inspect outputs — all in your browser.
           </p>
         </div>
 
