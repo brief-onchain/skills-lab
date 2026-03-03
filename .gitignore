@@ -37,4 +37,4 @@ pnpm-debug.log*
 .idea/
 .vscode/
 
-progress
+progress/
