@@ -73,8 +73,6 @@ export function getApiConfig() {
     apiBase:
       process.env.SKILLS_API_BASE ||
       process.env.AI_API_BASE ||
-      process.env.OPENAI_BASE_URL ||
-      process.env.OPENROUTER_BASE_URL ||
       '',
     apiPath: process.env.SKILLS_API_PATH || '/skills/run',
     apiKey:
