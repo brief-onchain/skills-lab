@@ -1,6 +1,6 @@
 ---
 name: funding_watch
-description: Reads current funding, mark price and next funding time.
+description: Reads funding rate, annualized estimate, and mark-index basis from Binance Futures.
 ---
 
 # Funding Watch

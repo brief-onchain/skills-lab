@@ -1,6 +1,6 @@
 ---
 name: top_movers
-description: Ranks strongest gainers by quote asset across spot pairs.
+description: Ranks top symbols by 24h change or quote volume with optional liquidity filter.
 ---
 
 # Top Movers Radar
@@ -15,9 +15,11 @@ description: Ranks strongest gainers by quote asset across spot pairs.
 
 {
   "quoteAsset": "USDT",
-  "limit": 10
+  "limit": 8,
+  "minQuoteVolume": 50000000,
+  "sortBy": "change"
 }
 
 ## Local Install (planned)
 
-npx @skillshub/top-movers
+npx @skillshub/top-movers-radar

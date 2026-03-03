@@ -106,21 +106,36 @@ function fallbackPriceSnapshot(symbol: string) {
   };
 }
 
-function fallbackTopMovers(quoteAsset: string, limit: number) {
+function fallbackTopMovers(quoteAsset: string, limit: number, sortBy: 'change' | 'volume') {
   const seed = [
     { symbol: `BTC${quoteAsset}`, lastPrice: 90000, changePercent24h: 1.2, quoteVolume24h: 1020000000 },
     { symbol: `ETH${quoteAsset}`, lastPrice: 2400, changePercent24h: 2.8, quoteVolume24h: 640000000 },
     { symbol: `BNB${quoteAsset}`, lastPrice: 620, changePercent24h: 1.9, quoteVolume24h: 320000000 }
   ];
-  return { quoteAsset, movers: seed.slice(0, Math.max(1, Math.min(limit, seed.length))) };
+  const sorted =
+    sortBy === 'volume'
+      ? seed.sort((a, b) => b.quoteVolume24h - a.quoteVolume24h)
+      : seed.sort((a, b) => b.changePercent24h - a.changePercent24h);
+  return {
+    quoteAsset,
+    sortBy,
+    movers: sorted.slice(0, Math.max(1, Math.min(limit, sorted.length)))
+  };
 }
 
 function fallbackFundingWatch(symbol: string) {
+  const markPrice = symbol === 'BTCUSDT' ? 90010 : 100;
+  const indexPrice = symbol === 'BTCUSDT' ? 89995 : 99.8;
+  const fundingRate = 0.0001;
+  const basisBps = Number((((markPrice - indexPrice) / indexPrice) * 10000).toFixed(2));
+  const annualizedFundingRate = Number((fundingRate * 3 * 365 * 100).toFixed(2));
   return {
     symbol,
-    markPrice: symbol === 'BTCUSDT' ? 90010 : 100,
-    indexPrice: symbol === 'BTCUSDT' ? 89995 : 99.8,
-    fundingRate: 0.0001,
+    markPrice,
+    indexPrice,
+    fundingRate,
+    annualizedFundingRate,
+    basisBps,
     nextFundingTime: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
     timeUntilFundingMinutes: 240
   };
@@ -330,11 +345,13 @@ async function runLocalSkill(skillId: string, input: Record<string, unknown>) {
       const quoteAsset = String(input.quoteAsset || 'USDT').toUpperCase();
       const limit = Math.max(1, Math.min(30, Number(input.limit || 10)));
       const minQuoteVolume = Math.max(0, Number(input.minQuoteVolume || 0));
+      const sortByInput = String(input.sortBy || 'change').toLowerCase();
+      const sortBy: 'change' | 'volume' = sortByInput === 'volume' ? 'volume' : 'change';
       let all: any[];
       try {
         all = await fetchJson('https://api.binance.com/api/v3/ticker/24hr');
       } catch {
-        return fallbackTopMovers(quoteAsset, limit);
+        return fallbackTopMovers(quoteAsset, limit, sortBy);
       }
       const leveragedTokenPattern = /(UP|DOWN|BULL|BEAR)$/;
       const movers = all
@@ -347,10 +364,12 @@ async function runLocalSkill(skillId: string, input: Record<string, unknown>) {
           changePercent24h: Number(item.priceChangePercent),
           quoteVolume24h: Number(item.quoteVolume)
         }))
-        .sort((a: any, b: any) => b.changePercent24h - a.changePercent24h)
+        .sort((a: any, b: any) =>
+          sortBy === 'volume' ? b.quoteVolume24h - a.quoteVolume24h : b.changePercent24h - a.changePercent24h
+        )
         .slice(0, limit);
 
-      return { quoteAsset, movers };
+      return { quoteAsset, minQuoteVolume, sortBy, movers };
     }
 
     case 'kline-brief': {
@@ -400,12 +419,21 @@ async function runLocalSkill(skillId: string, input: Record<string, unknown>) {
 
       const nextFundingMs = Number(premium.nextFundingTime || 0);
       const mins = Math.max(0, Math.round((nextFundingMs - Date.now()) / 60000));
+      const fundingRate = Number(premium.lastFundingRate);
+      const markPrice = Number(premium.markPrice);
+      const indexPrice = Number(premium.indexPrice);
+      const basisBps = indexPrice
+        ? Number((((markPrice - indexPrice) / indexPrice) * 10000).toFixed(2))
+        : 0;
+      const annualizedFundingRate = Number((fundingRate * 3 * 365 * 100).toFixed(2));
 
       return {
         symbol,
-        markPrice: Number(premium.markPrice),
-        indexPrice: Number(premium.indexPrice),
-        fundingRate: Number(premium.lastFundingRate),
+        markPrice,
+        indexPrice,
+        fundingRate,
+        annualizedFundingRate,
+        basisBps,
         nextFundingTime: nextFundingMs ? new Date(nextFundingMs).toISOString() : null,
         timeUntilFundingMinutes: mins
       };

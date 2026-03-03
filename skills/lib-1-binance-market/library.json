@@ -34,7 +34,7 @@
     {
       "id": "top-movers",
       "name": "Top Movers Radar",
-      "description": "Ranks strongest gainers by quote asset with optional liquidity filter.",
+      "description": "Ranks top symbols by 24h change or quote volume with optional liquidity filter.",
       "category": "Analytics",
       "version": "0.1.0",
       "author": "skillshub",
@@ -42,7 +42,8 @@
       "inputExample": {
         "quoteAsset": "USDT",
         "limit": 8,
-        "minQuoteVolume": 50000000
+        "minQuoteVolume": 50000000,
+        "sortBy": "change"
       },
       "installCommand": "npx @skillshub/top-movers-radar"
     },
@@ -78,7 +79,7 @@
     {
       "id": "funding-watch",
       "name": "Funding Watch",
-      "description": "Reads current funding rate and next funding time from Binance Futures.",
+      "description": "Reads funding rate, annualized estimate, and mark-index basis from Binance Futures.",
       "category": "Derivatives",
       "version": "0.1.0",
       "author": "skillshub",
