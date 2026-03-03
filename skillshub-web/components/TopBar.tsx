@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useTranslation, Locale } from '@/lib/i18n';
 import { Logo } from './Logo';
+import { SITE } from '@/lib/site';
 
 export default function TopBar() {
   const { t, locale, setLocale } = useTranslation();
@@ -35,6 +36,7 @@ export default function TopBar() {
             { href: '#skills', label: t.topbar.navSkills },
             { href: '#playground', label: t.topbar.navPlayground },
             { href: '#oss', label: t.topbar.navOss },
+            { href: '/roadmap', label: t.topbar.navRoadmap },
           ].map((item) => (
             <Link
               key={item.href}
@@ -48,6 +50,14 @@ export default function TopBar() {
         </div>
 
         <div className="flex items-center gap-3">
+          <a
+            href={SITE.twitterUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="hidden md:inline px-3 py-1.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-text-sub hover:text-gold hover:border-gold/30 transition-all"
+          >
+            X
+          </a>
           <button
             onClick={toggleLocale}
             className="px-3 py-1.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-text-sub hover:text-gold hover:border-gold/30 transition-all"

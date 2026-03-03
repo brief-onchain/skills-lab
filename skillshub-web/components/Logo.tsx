@@ -13,34 +13,54 @@ export const Logo = ({ className = "w-9 h-9" }: { className?: string }) => (
         <stop offset="0%" stopColor="#F0BE57" />
         <stop offset="100%" stopColor="#C58B2E" />
       </linearGradient>
-      <linearGradient id="logoGoldFade" x1="24" y1="6" x2="24" y2="42" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stopColor="#F0BE57" stopOpacity="0.25" />
-        <stop offset="100%" stopColor="#C58B2E" stopOpacity="0.08" />
-      </linearGradient>
     </defs>
 
-    {/* Outer hexagon ring */}
+    {/* Geometric brain — outer contour */}
     <path
-      d="M24 4L43.0526 15V37L24 48L4.94744 37V15L24 4Z"
-      stroke="url(#logoGoldFade)"
-      strokeWidth="1.2"
-    />
-
-    {/* Inner S-shaped circuit path */}
-    <path
-      d="M30 12H20C16.134 12 13 15.134 13 19V19C13 21.761 15.239 24 18 24H30C32.761 24 35 26.239 35 29V29C35 32.866 31.866 36 28 36H18"
+      d="M14 30 L10 24 L12 17 L17 12 L24 10 L31 12 L36 17 L38 24 L36 30 L32 34 L27 36 L21 36 L16 34 Z"
       stroke="url(#logoGold)"
-      strokeWidth="3.5"
-      strokeLinecap="round"
+      strokeWidth="1.5"
       strokeLinejoin="round"
+      fill="none"
     />
 
-    {/* Top node */}
-    <circle cx="32" cy="12" r="2.5" fill="#F0BE57" />
-    {/* Bottom node */}
-    <circle cx="16" cy="36" r="2.5" fill="#C58B2E" />
+    {/* Internal triangulation lines */}
+    <path
+      d="M17 12 L22 20 M24 10 L22 20 M31 12 L26 19 M36 17 L26 19 M38 24 L30 25 M36 30 L30 25 M32 34 L27 28 M27 36 L27 28 M21 36 L22 29 M16 34 L22 29 M14 30 L20 26 M10 24 L20 26 M12 17 L19 22"
+      stroke="#F0BE57"
+      strokeWidth="0.8"
+      opacity="0.5"
+    />
+    {/* Cross connections */}
+    <path
+      d="M22 20 L26 19 M26 19 L30 25 M30 25 L27 28 M27 28 L22 29 M22 29 L20 26 M20 26 L19 22 M19 22 L22 20 M22 20 L27 28 M26 19 L22 29 M30 25 L20 26 M19 22 L26 19"
+      stroke="#F0BE57"
+      strokeWidth="0.8"
+      opacity="0.6"
+    />
 
-    {/* Center hub dot */}
-    <circle cx="24" cy="24" r="1.8" fill="#F0BE57" opacity="0.6" />
+    {/* Glowing nodes — outer vertices */}
+    <circle cx="24" cy="10" r="1.8" fill="#F0BE57" />
+    <circle cx="17" cy="12" r="1.5" fill="#F0BE57" opacity="0.9" />
+    <circle cx="31" cy="12" r="1.5" fill="#F0BE57" opacity="0.9" />
+    <circle cx="12" cy="17" r="1.3" fill="#F0BE57" opacity="0.8" />
+    <circle cx="36" cy="17" r="1.3" fill="#F0BE57" opacity="0.8" />
+    <circle cx="10" cy="24" r="1.3" fill="#F0BE57" opacity="0.7" />
+    <circle cx="38" cy="24" r="1.3" fill="#F0BE57" opacity="0.7" />
+    <circle cx="14" cy="30" r="1.3" fill="#C58B2E" opacity="0.8" />
+    <circle cx="36" cy="30" r="1.3" fill="#C58B2E" opacity="0.8" />
+    <circle cx="16" cy="34" r="1.3" fill="#C58B2E" opacity="0.7" />
+    <circle cx="32" cy="34" r="1.3" fill="#C58B2E" opacity="0.7" />
+    <circle cx="21" cy="36" r="1.3" fill="#C58B2E" opacity="0.7" />
+    <circle cx="27" cy="36" r="1.3" fill="#C58B2E" opacity="0.7" />
+
+    {/* Glowing nodes — inner vertices */}
+    <circle cx="22" cy="20" r="1.5" fill="#F0BE57" opacity="0.9" />
+    <circle cx="26" cy="19" r="1.5" fill="#F0BE57" opacity="0.9" />
+    <circle cx="19" cy="22" r="1.3" fill="#F0BE57" opacity="0.8" />
+    <circle cx="30" cy="25" r="1.5" fill="#F0BE57" opacity="0.8" />
+    <circle cx="20" cy="26" r="1.3" fill="#F0BE57" opacity="0.8" />
+    <circle cx="27" cy="28" r="1.3" fill="#C58B2E" opacity="0.8" />
+    <circle cx="22" cy="29" r="1.3" fill="#C58B2E" opacity="0.8" />
   </svg>
 );

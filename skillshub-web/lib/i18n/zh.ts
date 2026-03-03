@@ -9,6 +9,7 @@ const zh: TranslationKeys = {
     navSkills: '技能',
     navPlayground: '试验场',
     navOss: '开源',
+    navRoadmap: '路线图',
     systemOnline: '系统在线',
   },
 

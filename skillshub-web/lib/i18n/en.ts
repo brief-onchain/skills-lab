@@ -7,6 +7,7 @@ const en = {
     navSkills: 'SKILLS',
     navPlayground: 'PLAYGROUND',
     navOss: 'OSS',
+    navRoadmap: 'ROADMAP',
     systemOnline: 'SYSTEM ONLINE',
   },
 

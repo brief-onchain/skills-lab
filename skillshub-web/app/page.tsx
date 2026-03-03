@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { ApiClient } from '@/lib/api';
-import { useTranslation } from '@/lib/i18n';
 import TopBar from '@/components/TopBar';
 import Hero from '@/components/Hero';
 import StrategyPanel from '@/components/StrategyPanel';
@@ -10,10 +9,9 @@ import SkillsGrid from '@/components/SkillsGrid';
 import Playground from '@/components/Playground';
 import OssIntake from '@/components/OssIntake';
 import InstallGuide from '@/components/InstallGuide';
+import SiteFooter from '@/components/SiteFooter';
 
 export default function Home() {
-  const { t } = useTranslation();
-
   useEffect(() => {
     // Initial health check
     ApiClient.checkHealth().then(res => {
@@ -31,9 +29,7 @@ export default function Home() {
       <OssIntake />
       <InstallGuide />
 
-      <footer className="py-8 bg-bg border-t border-white/5 text-center text-text-sub/40 text-xs font-mono">
-        <p>&copy; {new Date().getFullYear()} {t.footer.copyright}</p>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }
