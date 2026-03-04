@@ -1,0 +1,209 @@
+{
+  "generatedAt": "2026-03-04T09:59:09.201Z",
+  "query": "bsc",
+  "total": 7,
+  "notes": [
+    "This file is an intake manifest (metadata only), not a direct code copy.",
+    "Review high-risk skills before enabling any write/trade operations.",
+    "Prefer attribution and source links when surfacing external skills to users."
+  ],
+  "items": [
+    {
+      "slug": "bnb-nft",
+      "displayName": "BNB Chain NFT",
+      "owner": "CLAWZAI",
+      "summary": "NFT operations on BNB Chain — get NFT metadata, check ownership, list NFTs by owner, transfer ERC-721 tokens, get collection info. Use for any NFT-related tasks on BSC.",
+      "latestVersion": "0.1.0",
+      "updatedAt": 1772076030362,
+      "stats": {
+        "comments": 0,
+        "downloads": 1166,
+        "installsAllTime": 0,
+        "installsCurrent": 0,
+        "stars": 0,
+        "versions": 1
+      },
+      "metadata": null,
+      "riskLevel": "high",
+      "riskReasons": [
+        "private_key"
+      ],
+      "source": {
+        "platform": "clawhub",
+        "apiBase": "https://wry-manatee-359.convex.site",
+        "skillUrl": "https://clawhub.ai/CLAWZAI/bnb-nft",
+        "installCommand": "clawhub install bnb-nft"
+      }
+    },
+    {
+      "slug": "openclaw-bitagent",
+      "displayName": "Bitagent Skill",
+      "owner": "parasyte-x",
+      "summary": "Launch, buy, and sell tokens on BitAgent bonding curves via CLI. Use when the user wants to create a new agent token, or trade existing agent tokens on BitAgent (BSC Testnet/Mainnet).",
+      "latestVersion": "0.1.1",
+      "updatedAt": 1772248975001,
+      "stats": {
+        "comments": 0,
+        "downloads": 1412,
+        "installsAllTime": 0,
+        "installsCurrent": 0,
+        "stars": 0,
+        "versions": 2
+      },
+      "metadata": null,
+      "riskLevel": "high",
+      "riskReasons": [
+        "private_key",
+        "trade_execution",
+        "token_launch",
+        "wallet_signing"
+      ],
+      "source": {
+        "platform": "clawhub",
+        "apiBase": "https://wry-manatee-359.convex.site",
+        "skillUrl": "https://clawhub.ai/parasyte-x/openclaw-bitagent",
+        "installCommand": "clawhub install openclaw-bitagent"
+      }
+    },
+    {
+      "slug": "crypto-portfolio-tracker",
+      "displayName": "Crypto Portfolio Tracker",
+      "owner": "Katrina-jpg",
+      "summary": "加密貨幣Portfolio追蹤 - 支援TRON/ETH/BSC，分析持倉、收益、Gas費用",
+      "latestVersion": "1.0.0",
+      "updatedAt": 1772062240103,
+      "stats": {
+        "comments": 0,
+        "downloads": 687,
+        "installsAllTime": 3,
+        "installsCurrent": 3,
+        "stars": 0,
+        "versions": 1
+      },
+      "metadata": null,
+      "riskLevel": "medium",
+      "riskReasons": [
+        "trade_execution"
+      ],
+      "source": {
+        "platform": "clawhub",
+        "apiBase": "https://wry-manatee-359.convex.site",
+        "skillUrl": "https://clawhub.ai/Katrina-jpg/crypto-portfolio-tracker",
+        "installCommand": "clawhub install crypto-portfolio-tracker"
+      }
+    },
+    {
+      "slug": "pancake-swap-skills",
+      "displayName": "pancake skills",
+      "owner": "KJ-Script",
+      "summary": "BSC (Binance Smart Chain) trading on PancakeSwap — wallet creation, token swaps, pair discovery, and balance management.",
+      "latestVersion": "1.0.0",
+      "updatedAt": 1772061040685,
+      "stats": {
+        "comments": 0,
+        "downloads": 252,
+        "installsAllTime": 0,
+        "installsCurrent": 0,
+        "stars": 0,
+        "versions": 1
+      },
+      "metadata": null,
+      "riskLevel": "high",
+      "riskReasons": [
+        "private_key",
+        "trade_execution",
+        "wallet_signing"
+      ],
+      "source": {
+        "platform": "clawhub",
+        "apiBase": "https://wry-manatee-359.convex.site",
+        "skillUrl": "https://clawhub.ai/KJ-Script/pancake-swap-skills",
+        "installCommand": "clawhub install pancake-swap-skills"
+      }
+    },
+    {
+      "slug": "8004-skill",
+      "displayName": "8004 Skill",
+      "owner": "SpyderJR",
+      "summary": "ERC-8004 Trustless Agents - Register and manage AI agent identities on TRON and BSC blockchains with on-chain reputation tracking",
+      "latestVersion": "1.0.1",
+      "updatedAt": 1772058635891,
+      "stats": {
+        "comments": 0,
+        "downloads": 284,
+        "installsAllTime": 2,
+        "installsCurrent": 0,
+        "stars": 0,
+        "versions": 2
+      },
+      "metadata": null,
+      "riskLevel": "high",
+      "riskReasons": [
+        "private_key",
+        "wallet_signing"
+      ],
+      "source": {
+        "platform": "clawhub",
+        "apiBase": "https://wry-manatee-359.convex.site",
+        "skillUrl": "https://clawhub.ai/SpyderJR/8004-skill",
+        "installCommand": "clawhub install 8004-skill"
+      }
+    },
+    {
+      "slug": "probable-skill",
+      "displayName": "Probable Skill",
+      "owner": "ternencescott",
+      "summary": "0xProbable prediction market trading skills on BSC mainnet. Trade outcome shares (YES/NO) on real-world events via CLOB order book using @prob/clob SDK. Supp...",
+      "latestVersion": "0.1.1",
+      "updatedAt": 1772578190164,
+      "stats": {
+        "comments": 0,
+        "downloads": 25,
+        "installsAllTime": 0,
+        "installsCurrent": 0,
+        "stars": 0,
+        "versions": 2
+      },
+      "metadata": null,
+      "riskLevel": "high",
+      "riskReasons": [
+        "private_key",
+        "trade_execution"
+      ],
+      "source": {
+        "platform": "clawhub",
+        "apiBase": "https://wry-manatee-359.convex.site",
+        "skillUrl": "https://clawhub.ai/ternencescott/probable-skill",
+        "installCommand": "clawhub install probable-skill"
+      }
+    },
+    {
+      "slug": "probable-skills-2",
+      "displayName": "Probable Skill",
+      "owner": "ternencescott",
+      "summary": "0xProbable prediction market trading skills on BSC mainnet. Trade outcome shares (YES/NO) on real-world events via CLOB order book using @prob/clob SDK. Supp...",
+      "latestVersion": "0.1.0",
+      "updatedAt": 1772578164316,
+      "stats": {
+        "comments": 0,
+        "downloads": 20,
+        "installsAllTime": 0,
+        "installsCurrent": 0,
+        "stars": 0,
+        "versions": 1
+      },
+      "metadata": null,
+      "riskLevel": "high",
+      "riskReasons": [
+        "private_key",
+        "trade_execution"
+      ],
+      "source": {
+        "platform": "clawhub",
+        "apiBase": "https://wry-manatee-359.convex.site",
+        "skillUrl": "https://clawhub.ai/ternencescott/probable-skills-2",
+        "installCommand": "clawhub install probable-skills-2"
+      }
+    }
+  ]
+}
