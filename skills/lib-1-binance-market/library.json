@@ -107,6 +107,53 @@
       "installCommand": "npx @skillshub/funding-watch"
     },
     {
+      "id": "funding-basis-carry-scan",
+      "name": "Funding Basis Carry Scan",
+      "description": "Combines funding history and basis term structure to surface carry setups with risk labels.",
+      "category": "Derivatives",
+      "version": "0.1.0",
+      "author": "skillshub",
+      "mode": "live",
+      "inputExample": {
+        "symbol": "BTCUSDT",
+        "pair": "BTCUSDT",
+        "contractType": "PERPETUAL",
+        "period": "1h",
+        "limit": 12
+      },
+      "installCommand": "npx @skillshub/funding-basis-carry-scan"
+    },
+    {
+      "id": "crowding-risk-scan",
+      "name": "Crowding Risk Scan",
+      "description": "Tracks long/short crowding from account ratios, taker flow, and OI change for squeeze warnings.",
+      "category": "Derivatives",
+      "version": "0.1.0",
+      "author": "skillshub",
+      "mode": "live",
+      "inputExample": {
+        "symbol": "BTCUSDT",
+        "period": "1h",
+        "limit": 12
+      },
+      "installCommand": "npx @skillshub/crowding-risk-scan"
+    },
+    {
+      "id": "liquidation-heatmap",
+      "name": "Liquidation Heatmap",
+      "description": "Aggregates recent force orders to estimate long-vs-short liquidation pressure.",
+      "category": "Derivatives",
+      "version": "0.1.0",
+      "author": "skillshub",
+      "mode": "live",
+      "inputExample": {
+        "symbol": "BTCUSDT",
+        "windowMinutes": 60,
+        "limit": 50
+      },
+      "installCommand": "npx @skillshub/liquidation-heatmap"
+    },
+    {
       "id": "open-interest-scan",
       "name": "Open Interest Scan",
       "description": "Tracks futures open interest and taker flow changes for one symbol.",

@@ -74,6 +74,11 @@ function percentile(values: number[], p: number) {
   return sorted[idx];
 }
 
+function average(values: number[]) {
+  if (!values.length) return 0;
+  return values.reduce((sum, v) => sum + v, 0) / values.length;
+}
+
 function extractChatReply(parsed: any) {
   let reply = parsed?.choices?.[0]?.message?.content;
   if (Array.isArray(reply)) {
@@ -329,6 +334,55 @@ function fallbackOpenInterestScan(symbol: string, period: string) {
   };
 }
 
+function fallbackFundingBasisCarryScan(symbol: string, pair: string, period: string) {
+  return {
+    source: 'fallback',
+    symbol,
+    pair,
+    period,
+    contractType: 'PERPETUAL',
+    avgFundingRate: 0.00012,
+    latestFundingRate: 0.00015,
+    annualizedFundingRatePct: 13.14,
+    latestBasisRatePct: 0.18,
+    annualizedBasisRatePct: 2.4,
+    carryScore: 15.54,
+    setup: 'cash-and-carry-short-perp',
+    riskLevel: 'medium',
+    note: 'Futures carry endpoints unavailable; showing fallback carry snapshot.'
+  };
+}
+
+function fallbackCrowdingRiskScan(symbol: string, period: string) {
+  return {
+    source: 'fallback',
+    symbol,
+    period,
+    globalLongShortRatio: 1.42,
+    topLongShortRatio: 1.68,
+    takerBuySellRatio: 1.21,
+    openInterestChangePercent: 2.3,
+    crowdingSignal: 'balanced',
+    squeezeRisk: 'monitor',
+    score: 1,
+    note: 'Crowding endpoints unavailable; showing fallback positioning snapshot.'
+  };
+}
+
+function fallbackLiquidationHeatmap(symbol: string, windowMinutes: number) {
+  return {
+    source: 'fallback',
+    symbol,
+    windowMinutes,
+    totalLiquidationNotionalUsd: 23500000,
+    longLiquidationNotionalUsd: 13600000,
+    shortLiquidationNotionalUsd: 9900000,
+    imbalanceRatio: 1.37,
+    dominance: 'long-liquidations-dominant',
+    note: 'Force-order endpoint unavailable; showing fallback liquidation snapshot.'
+  };
+}
+
 function fallbackRpcFanout(method: string, endpoints: string[]) {
   const picked = endpoints[0] || 'https://bsc-dataseed.binance.org/';
   return {
@@ -340,6 +394,277 @@ function fallbackRpcFanout(method: string, endpoints: string[]) {
     latestBlock: 42000000,
     maxBlockDrift: 0,
     note: 'RPC probes unavailable; showing fallback health snapshot.'
+  };
+}
+
+async function runFundingBasisCarryScan(input: Record<string, unknown>) {
+  const symbol = normalizeSymbol(input.symbol || 'BTCUSDT');
+  const pair = String(input.pair || symbol).toUpperCase();
+  const allowedPeriods = ['5m', '15m', '30m', '1h', '2h', '4h', '6h', '12h', '1d'];
+  const periodInput = String(input.period || '1h');
+  const period = allowedPeriods.includes(periodInput) ? periodInput : '1h';
+  const allowedContractTypes = ['PERPETUAL', 'CURRENT_QUARTER', 'NEXT_QUARTER'];
+  const contractTypeInput = String(input.contractType || 'PERPETUAL').toUpperCase();
+  const contractType = allowedContractTypes.includes(contractTypeInput)
+    ? contractTypeInput
+    : 'PERPETUAL';
+  const limit = Math.max(2, Math.min(30, Number(input.limit || 12)));
+
+  let fundingRows: any[] = [];
+  let basisRows: any[] = [];
+  let premium: any = null;
+  try {
+    const [fundingRes, basisRes, premiumRes] = await Promise.allSettled([
+      fetchJson(`https://fapi.binance.com/fapi/v1/fundingRate?symbol=${symbol}&limit=${limit}`),
+      fetchJson(
+        `https://fapi.binance.com/futures/data/basis?pair=${pair}&contractType=${contractType}&period=${period}&limit=${limit}`
+      ),
+      fetchJson(`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${symbol}`)
+    ]);
+
+    if (fundingRes.status === 'fulfilled' && Array.isArray(fundingRes.value)) {
+      fundingRows = fundingRes.value;
+    }
+    if (basisRes.status === 'fulfilled' && Array.isArray(basisRes.value)) {
+      basisRows = basisRes.value;
+    }
+    if (premiumRes.status === 'fulfilled') {
+      premium = premiumRes.value;
+    }
+  } catch {
+    return fallbackFundingBasisCarryScan(symbol, pair, period);
+  }
+
+  if (!fundingRows.length && !basisRows.length) {
+    return fallbackFundingBasisCarryScan(symbol, pair, period);
+  }
+
+  const fundingRates = fundingRows
+    .map((x) => Number(x?.fundingRate ?? 0))
+    .filter((x) => Number.isFinite(x));
+  const avgFundingRate = average(fundingRates);
+  const latestFundingRate = fundingRates.length ? fundingRates[fundingRates.length - 1] : 0;
+  const annualizedFundingRatePct = Number((avgFundingRate * 3 * 365 * 100).toFixed(3));
+
+  const latestBasis = basisRows.length ? basisRows[basisRows.length - 1] : null;
+  const latestBasisRatePct = Number((Number(latestBasis?.basisRate ?? 0) * 100).toFixed(3));
+  const annualizedBasisRatePct = Number(
+    (Number(latestBasis?.annualizedBasisRate ?? 0) * 100).toFixed(3)
+  );
+
+  const carryScore = Number((annualizedFundingRatePct + annualizedBasisRatePct).toFixed(3));
+  let setup = 'neutral';
+  let riskLevel = 'low';
+  if (carryScore >= 8) {
+    setup = 'cash-and-carry-short-perp';
+    riskLevel = carryScore >= 20 ? 'high' : 'medium';
+  } else if (carryScore <= -8) {
+    setup = 'reverse-carry-long-perp';
+    riskLevel = Math.abs(carryScore) >= 20 ? 'high' : 'medium';
+  }
+
+  return {
+    source: 'binance-futures',
+    symbol,
+    pair,
+    contractType,
+    period,
+    limit,
+    avgFundingRate: Number(avgFundingRate.toFixed(8)),
+    latestFundingRate: Number(latestFundingRate.toFixed(8)),
+    annualizedFundingRatePct,
+    latestBasisRatePct,
+    annualizedBasisRatePct,
+    carryScore,
+    setup,
+    riskLevel,
+    markPrice: premium?.markPrice ? Number(premium.markPrice) : null,
+    indexPrice: premium?.indexPrice ? Number(premium.indexPrice) : null,
+    note: 'Signal only. Keep manual confirmation + strict position/risk limits before execution.'
+  };
+}
+
+async function runCrowdingRiskScan(input: Record<string, unknown>) {
+  const symbol = normalizeSymbol(input.symbol || 'BTCUSDT');
+  const allowedPeriods = ['5m', '15m', '30m', '1h', '2h', '4h', '6h', '12h', '1d'];
+  const periodInput = String(input.period || '1h');
+  const period = allowedPeriods.includes(periodInput) ? periodInput : '1h';
+  const limit = Math.max(2, Math.min(30, Number(input.limit || 12)));
+
+  let globalRows: any[] = [];
+  let topRows: any[] = [];
+  let takerRows: any[] = [];
+  let openInterestRows: any[] = [];
+  try {
+    const [globalRes, topRes, takerRes, oiRes] = await Promise.allSettled([
+      fetchJson(
+        `https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=${period}&limit=${limit}`
+      ),
+      fetchJson(
+        `https://fapi.binance.com/futures/data/topLongShortAccountRatio?symbol=${symbol}&period=${period}&limit=${limit}`
+      ),
+      fetchJson(
+        `https://fapi.binance.com/futures/data/takerlongshortRatio?symbol=${symbol}&period=${period}&limit=${limit}`
+      ),
+      fetchJson(
+        `https://fapi.binance.com/futures/data/openInterestHist?symbol=${symbol}&period=${period}&limit=${limit}`
+      )
+    ]);
+
+    if (globalRes.status === 'fulfilled' && Array.isArray(globalRes.value)) globalRows = globalRes.value;
+    if (topRes.status === 'fulfilled' && Array.isArray(topRes.value)) topRows = topRes.value;
+    if (takerRes.status === 'fulfilled' && Array.isArray(takerRes.value)) takerRows = takerRes.value;
+    if (oiRes.status === 'fulfilled' && Array.isArray(oiRes.value)) openInterestRows = oiRes.value;
+  } catch {
+    return fallbackCrowdingRiskScan(symbol, period);
+  }
+
+  if (!globalRows.length && !topRows.length && !takerRows.length) {
+    return fallbackCrowdingRiskScan(symbol, period);
+  }
+
+  const latestGlobal = globalRows.length ? globalRows[globalRows.length - 1] : null;
+  const latestTop = topRows.length ? topRows[topRows.length - 1] : null;
+  const latestTaker = takerRows.length ? takerRows[takerRows.length - 1] : null;
+  const latestOi = openInterestRows.length ? openInterestRows[openInterestRows.length - 1] : null;
+  const prevOi = openInterestRows.length > 1 ? openInterestRows[openInterestRows.length - 2] : null;
+
+  const globalLongShortRatio = Number(latestGlobal?.longShortRatio || 0);
+  const topLongShortRatio = Number(latestTop?.longShortRatio || 0);
+  const takerBuySellRatio = Number(latestTaker?.buySellRatio || 0);
+  const latestOpenInterest = Number(latestOi?.sumOpenInterest || 0);
+  const prevOpenInterest = Number(prevOi?.sumOpenInterest || 0);
+  const openInterestChangePercent = prevOpenInterest
+    ? Number((((latestOpenInterest - prevOpenInterest) / prevOpenInterest) * 100).toFixed(3))
+    : 0;
+
+  let score = 0;
+  if (globalLongShortRatio >= 1.8) score += 2;
+  if (globalLongShortRatio > 0 && globalLongShortRatio <= 0.6) score -= 2;
+  if (topLongShortRatio >= 2.0) score += 2;
+  if (topLongShortRatio > 0 && topLongShortRatio <= 0.7) score -= 2;
+  if (takerBuySellRatio >= 1.5) score += 1;
+  if (takerBuySellRatio > 0 && takerBuySellRatio <= 0.7) score -= 1;
+
+  let crowdingSignal = 'balanced';
+  let squeezeRisk = 'monitor';
+  if (score >= 4) {
+    crowdingSignal = 'crowded-long';
+    squeezeRisk = openInterestChangePercent >= 3 ? 'long-squeeze-risk' : 'moderate';
+  } else if (score <= -4) {
+    crowdingSignal = 'crowded-short';
+    squeezeRisk = openInterestChangePercent >= 3 ? 'short-squeeze-risk' : 'moderate';
+  }
+
+  return {
+    source: 'binance-futures',
+    symbol,
+    period,
+    limit,
+    globalLongShortRatio: globalLongShortRatio || null,
+    topLongShortRatio: topLongShortRatio || null,
+    takerBuySellRatio: takerBuySellRatio || null,
+    openInterestChangePercent,
+    crowdingSignal,
+    squeezeRisk,
+    score,
+    note: 'Use as crowding filter before trade entry; avoid single-signal decisions.'
+  };
+}
+
+async function runLiquidationHeatmap(input: Record<string, unknown>) {
+  const symbol = normalizeSymbol(input.symbol || 'BTCUSDT');
+  const windowMinutes = Math.max(5, Math.min(240, Number(input.windowMinutes || 60)));
+  const limit = Math.max(10, Math.min(100, Number(input.limit || 50)));
+  const startTime = Number(input.startTime || Date.now() - windowMinutes * 60 * 1000);
+
+  let forceOrders: any[] = [];
+  let ticker: any = null;
+  try {
+    const [forceRes, tickerRes] = await Promise.allSettled([
+      fetchJson(
+        `https://fapi.binance.com/fapi/v1/allForceOrders?symbol=${symbol}&startTime=${startTime}&limit=${limit}`
+      ),
+      fetchJson(`https://fapi.binance.com/fapi/v1/ticker/24hr?symbol=${symbol}`)
+    ]);
+
+    if (forceRes.status === 'fulfilled' && Array.isArray(forceRes.value)) {
+      forceOrders = forceRes.value;
+    }
+    if (tickerRes.status === 'fulfilled') {
+      ticker = tickerRes.value;
+    }
+  } catch {
+    return fallbackLiquidationHeatmap(symbol, windowMinutes);
+  }
+
+  if (!forceOrders.length) {
+    return fallbackLiquidationHeatmap(symbol, windowMinutes);
+  }
+
+  let longLiquidationNotionalUsd = 0;
+  let shortLiquidationNotionalUsd = 0;
+  const events = forceOrders
+    .map((row: any) => {
+      const side = String(row?.S || row?.side || '').toUpperCase();
+      const price = Number(row?.ap || row?.averagePrice || row?.p || row?.price || ticker?.lastPrice || 0);
+      const qty = Number(row?.z || row?.executedQty || row?.origQty || row?.q || 0);
+      const notionalUsd = Number((price * qty).toFixed(2));
+      return {
+        side,
+        notionalUsd,
+        avgPrice: price,
+        qty,
+        time: row?.T || row?.time || null
+      };
+    })
+    .filter((x) => x.notionalUsd > 0);
+
+  for (const row of events) {
+    if (row.side === 'SELL') {
+      longLiquidationNotionalUsd += row.notionalUsd;
+    } else if (row.side === 'BUY') {
+      shortLiquidationNotionalUsd += row.notionalUsd;
+    }
+  }
+
+  if (!longLiquidationNotionalUsd && !shortLiquidationNotionalUsd) {
+    return fallbackLiquidationHeatmap(symbol, windowMinutes);
+  }
+
+  const totalLiquidationNotionalUsd = Number(
+    (longLiquidationNotionalUsd + shortLiquidationNotionalUsd).toFixed(2)
+  );
+  const imbalanceRatio = shortLiquidationNotionalUsd
+    ? Number((longLiquidationNotionalUsd / shortLiquidationNotionalUsd).toFixed(3))
+    : null;
+  const dominance = longLiquidationNotionalUsd > shortLiquidationNotionalUsd * 1.2
+    ? 'long-liquidations-dominant'
+    : shortLiquidationNotionalUsd > longLiquidationNotionalUsd * 1.2
+      ? 'short-liquidations-dominant'
+      : 'balanced';
+
+  return {
+    source: 'binance-futures',
+    symbol,
+    windowMinutes,
+    limit,
+    markPrice: ticker?.lastPrice ? Number(ticker.lastPrice) : null,
+    totalLiquidationNotionalUsd,
+    longLiquidationNotionalUsd: Number(longLiquidationNotionalUsd.toFixed(2)),
+    shortLiquidationNotionalUsd: Number(shortLiquidationNotionalUsd.toFixed(2)),
+    imbalanceRatio,
+    dominance,
+    topEvents: events
+      .sort((a, b) => b.notionalUsd - a.notionalUsd)
+      .slice(0, 5)
+      .map((x) => ({
+        side: x.side,
+        notionalUsd: x.notionalUsd,
+        avgPrice: x.avgPrice,
+        qty: x.qty,
+        time: x.time ? new Date(Number(x.time)).toISOString() : null
+      }))
   };
 }
 
@@ -950,6 +1275,18 @@ async function runLocalSkill(skillId: string, input: Record<string, unknown>) {
         nextFundingTime: nextFundingMs ? new Date(nextFundingMs).toISOString() : null,
         timeUntilFundingMinutes: mins
       };
+    }
+
+    case 'funding-basis-carry-scan': {
+      return runFundingBasisCarryScan(input);
+    }
+
+    case 'crowding-risk-scan': {
+      return runCrowdingRiskScan(input);
+    }
+
+    case 'liquidation-heatmap': {
+      return runLiquidationHeatmap(input);
     }
 
     case 'open-interest-scan': {

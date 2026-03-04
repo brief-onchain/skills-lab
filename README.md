@@ -37,6 +37,9 @@ npx @skillshub/cz-style-rewrite
 npx @skillshub/kline-brief
 npx @skillshub/symbol-status
 npx @skillshub/funding-watch
+npx @skillshub/funding-basis-carry-scan
+npx @skillshub/crowding-risk-scan
+npx @skillshub/liquidation-heatmap
 npx @skillshub/open-interest-scan
 npx @skillshub/bsc-rpc-fanout-check
 ```
