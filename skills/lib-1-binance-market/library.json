@@ -154,6 +154,20 @@
       "installCommand": "npx @skillshub/liquidation-heatmap"
     },
     {
+      "id": "bsc-honeypot-check",
+      "name": "BSC Honeypot Check",
+      "description": "Checks sell restrictions, tax anomalies, and multi-DEX liquidity signals before buy-in.",
+      "category": "Security",
+      "version": "0.1.0",
+      "author": "skillshub",
+      "mode": "live",
+      "inputExample": {
+        "tokenAddress": "0x...",
+        "maxPairs": 5
+      },
+      "installCommand": "npx @skillshub/bsc-honeypot-check"
+    },
+    {
       "id": "open-interest-scan",
       "name": "Open Interest Scan",
       "description": "Tracks futures open interest and taker flow changes for one symbol.",

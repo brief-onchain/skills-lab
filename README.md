@@ -40,6 +40,7 @@ npx @skillshub/funding-watch
 npx @skillshub/funding-basis-carry-scan
 npx @skillshub/crowding-risk-scan
 npx @skillshub/liquidation-heatmap
+npx @skillshub/bsc-honeypot-check
 npx @skillshub/open-interest-scan
 npx @skillshub/bsc-rpc-fanout-check
 ```

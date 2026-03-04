@@ -79,6 +79,15 @@ function average(values: number[]) {
   return values.reduce((sum, v) => sum + v, 0) / values.length;
 }
 
+function isEvmAddress(value: string) {
+  return /^0x[a-fA-F0-9]{40}$/.test(value);
+}
+
+function toNumberSafe(value: unknown, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 function extractChatReply(parsed: any) {
   let reply = parsed?.choices?.[0]?.message?.content;
   if (Array.isArray(reply)) {
@@ -383,6 +392,41 @@ function fallbackLiquidationHeatmap(symbol: string, windowMinutes: number) {
   };
 }
 
+function fallbackBscHoneypotCheck(tokenAddress: string) {
+  return {
+    source: 'fallback',
+    chainId: 'bsc',
+    tokenAddress,
+    riskLevel: 'medium',
+    riskScore: 52,
+    checks: {
+      sellRestrictionDetected: false,
+      highTaxDetected: true,
+      suspiciousLiquidity: false,
+      liquidityLockStatus: 'unknown'
+    },
+    tax: {
+      buyTaxPct: 8.5,
+      sellTaxPct: 9.5
+    },
+    dexLiquiditySimulation: [
+      {
+        dexId: 'pancakeswap',
+        pairAddress: 'unknown',
+        liquidityUsd: 180000,
+        buys24h: 82,
+        sells24h: 44,
+        sellsMissingFlag: false
+      }
+    ],
+    warnings: [
+      'Live honeypot endpoints unavailable; fallback snapshot only.',
+      'Do not rely on fallback result for final buy decision.'
+    ],
+    note: 'Use live check in production before executing transactions.'
+  };
+}
+
 function fallbackRpcFanout(method: string, endpoints: string[]) {
   const picked = endpoints[0] || 'https://bsc-dataseed.binance.org/';
   return {
@@ -665,6 +709,162 @@ async function runLiquidationHeatmap(input: Record<string, unknown>) {
         qty: x.qty,
         time: x.time ? new Date(Number(x.time)).toISOString() : null
       }))
+  };
+}
+
+async function runBscHoneypotCheck(input: Record<string, unknown>) {
+  const tokenAddress = String(input.tokenAddress || input.address || '').trim();
+  if (!isEvmAddress(tokenAddress)) {
+    throw new Error('tokenAddress must be a valid EVM address');
+  }
+  const maxPairs = Math.max(1, Math.min(10, Number(input.maxPairs || 5)));
+
+  let dexData: any = null;
+  let honeypotBase: any = null;
+  try {
+    const [dexRes, hpRes] = await Promise.allSettled([
+      fetchJson(`https://api.dexscreener.com/token-pairs/v1/bsc/${tokenAddress}`, 5500),
+      fetchJson(`https://api.honeypot.is/v2/IsHoneypot?address=${tokenAddress}&chainID=56`, 5500)
+    ]);
+    if (dexRes.status === 'fulfilled') dexData = dexRes.value;
+    if (hpRes.status === 'fulfilled') honeypotBase = hpRes.value;
+  } catch {
+    return fallbackBscHoneypotCheck(tokenAddress);
+  }
+
+  if (!dexData && !honeypotBase) {
+    return fallbackBscHoneypotCheck(tokenAddress);
+  }
+
+  const allPairs = Array.isArray(dexData)
+    ? dexData
+    : Array.isArray(dexData?.pairs)
+      ? dexData.pairs
+      : [];
+  const bscPairs = allPairs
+    .filter((x: any) => String(x?.chainId || '').toLowerCase() === 'bsc')
+    .filter((x: any) => {
+      const base = String(x?.baseToken?.address || '').toLowerCase();
+      const quote = String(x?.quoteToken?.address || '').toLowerCase();
+      return base === tokenAddress.toLowerCase() || quote === tokenAddress.toLowerCase();
+    })
+    .sort((a: any, b: any) => toNumberSafe(b?.liquidity?.usd, 0) - toNumberSafe(a?.liquidity?.usd, 0))
+    .slice(0, maxPairs);
+
+  const pairChecks = await Promise.all(
+    bscPairs.map(async (pair: any) => {
+      let hp: any = null;
+      try {
+        hp = await fetchJson(
+          `https://api.honeypot.is/v2/IsHoneypot?address=${tokenAddress}&chainID=56&pair=${pair.pairAddress}`,
+          5500
+        );
+      } catch {
+        hp = null;
+      }
+
+      const buyTax = toNumberSafe(
+        hp?.simulationResult?.buyTax ?? hp?.simulationResult?.buyTaxPercent ?? hp?.buyTax,
+        0
+      );
+      const sellTax = toNumberSafe(
+        hp?.simulationResult?.sellTax ?? hp?.simulationResult?.sellTaxPercent ?? hp?.sellTax,
+        0
+      );
+      const isHoneypot = Boolean(
+        hp?.honeypotResult?.isHoneypot ??
+        hp?.simulationResult?.isHoneypot ??
+        hp?.IsHoneypot
+      );
+      const buys24h = toNumberSafe(pair?.txns?.h24?.buys, 0);
+      const sells24h = toNumberSafe(pair?.txns?.h24?.sells, 0);
+      return {
+        dexId: String(pair?.dexId || 'unknown'),
+        pairAddress: String(pair?.pairAddress || ''),
+        liquidityUsd: toNumberSafe(pair?.liquidity?.usd, 0),
+        priceUsd: toNumberSafe(pair?.priceUsd, 0),
+        fdv: toNumberSafe(pair?.fdv, 0),
+        buys24h,
+        sells24h,
+        sellsMissingFlag: buys24h >= 20 && sells24h === 0,
+        buyTaxPct: Number(buyTax.toFixed(3)),
+        sellTaxPct: Number(sellTax.toFixed(3)),
+        honeypotFlag: isHoneypot
+      };
+    })
+  );
+
+  const baseBuyTax = toNumberSafe(
+    honeypotBase?.simulationResult?.buyTax ??
+    honeypotBase?.simulationResult?.buyTaxPercent ??
+    honeypotBase?.buyTax,
+    pairChecks[0]?.buyTaxPct || 0
+  );
+  const baseSellTax = toNumberSafe(
+    honeypotBase?.simulationResult?.sellTax ??
+    honeypotBase?.simulationResult?.sellTaxPercent ??
+    honeypotBase?.sellTax,
+    pairChecks[0]?.sellTaxPct || 0
+  );
+  const baseHoneypot = Boolean(
+    honeypotBase?.honeypotResult?.isHoneypot ??
+    honeypotBase?.simulationResult?.isHoneypot ??
+    honeypotBase?.IsHoneypot
+  );
+
+  const topLiquidity = pairChecks.length
+    ? Math.max(...pairChecks.map((x) => toNumberSafe(x.liquidityUsd, 0)))
+    : 0;
+  const noSellPattern = pairChecks.some((x) => x.sellsMissingFlag);
+  const highTaxDetected = baseBuyTax >= 12 || baseSellTax >= 12 || pairChecks.some((x) => x.buyTaxPct >= 12 || x.sellTaxPct >= 12);
+  const sellRestrictionDetected = baseHoneypot || pairChecks.some((x) => x.honeypotFlag);
+  const suspiciousLiquidity = topLiquidity > 0 ? topLiquidity < 30000 : true;
+
+  let riskScore = 0;
+  if (sellRestrictionDetected) riskScore += 70;
+  if (highTaxDetected) riskScore += 20;
+  if (suspiciousLiquidity) riskScore += 20;
+  if (noSellPattern) riskScore += 12;
+  riskScore = Math.min(100, riskScore);
+
+  const riskLevel = riskScore >= 70 ? 'high' : riskScore >= 40 ? 'medium' : 'low';
+  const warnings: string[] = [];
+  if (sellRestrictionDetected) warnings.push('Potential sell restriction / honeypot behavior detected.');
+  if (highTaxDetected) warnings.push('Buy/Sell tax appears above common range.');
+  if (suspiciousLiquidity) warnings.push('Liquidity is thin; slippage and trap risk are higher.');
+  if (noSellPattern) warnings.push('24h buys present but sells missing on at least one DEX pair.');
+  warnings.push('Liquidity lock status from free endpoints can be partial. Verify manually before buy.');
+
+  return {
+    source: 'dexscreener+honeypot',
+    chainId: 'bsc',
+    tokenAddress,
+    token: {
+      name: String(
+        honeypotBase?.token?.name ||
+        bscPairs[0]?.baseToken?.name ||
+        ''
+      ),
+      symbol: String(
+        honeypotBase?.token?.symbol ||
+        bscPairs[0]?.baseToken?.symbol ||
+        ''
+      )
+    },
+    riskLevel,
+    riskScore,
+    checks: {
+      sellRestrictionDetected,
+      highTaxDetected,
+      suspiciousLiquidity,
+      liquidityLockStatus: 'unknown'
+    },
+    tax: {
+      buyTaxPct: Number(baseBuyTax.toFixed(3)),
+      sellTaxPct: Number(baseSellTax.toFixed(3))
+    },
+    dexLiquiditySimulation: pairChecks,
+    warnings
   };
 }
 
@@ -1287,6 +1487,10 @@ async function runLocalSkill(skillId: string, input: Record<string, unknown>) {
 
     case 'liquidation-heatmap': {
       return runLiquidationHeatmap(input);
+    }
+
+    case 'bsc-honeypot-check': {
+      return runBscHoneypotCheck(input);
     }
 
     case 'open-interest-scan': {
