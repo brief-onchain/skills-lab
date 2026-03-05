@@ -47,3 +47,6 @@ hf-cache/
 
 ## TypeScript incremental build cache
 skillshub-web/tsconfig.tsbuildinfo
+
+docs/
+assets/

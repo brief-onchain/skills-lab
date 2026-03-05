@@ -167,7 +167,7 @@ Community Asks, Community Gets.
 | 推文 8 Open Interest Scan | assets/tw-open-interest.png |
 | 推文 10 收尾煽情 | assets/tw-community-finale.png |
 | CZ Style Rewrite | assets/tw-cz-style-rewrite.png |
-| Four.Meme Skill Bridge | assets/tw-four-meme-bridge.png |
+| 生态扩张进展 | assets/tw-ecosystem-expansion.png |
 | 置顶推文 项目总体介绍 | assets/tw-skillshub-pinned.png |
 
 其余推文为纯文字，不需要配图。
@@ -302,9 +302,91 @@ GitHub: https://github.com/brief-onchain/skills-lab
 
 ---
 
+## 推文 — BAP578 × Skills：我们给 BAP578 写了一整套开发模块 【配图：tw-bap578-modules.png】
+
+![BAP578 Dev Modules](../assets/tw-bap578-modules.png)
+
+.@ladyxtel 我们团队花了不少时间研究 BAP578，不只是用——是自己写了一整套 BAP578 开发模块，开源放在 SkillsHub 里。
+
+5 个模块，覆盖 BAP578 合约开发全流程：
+
+bap578-adapter-blueprint — 输入合约名和接口，直接生成带 vault 资金控制的 adapter 合约蓝图。不用从零写，输入参数就出骨架。
+
+bap578-vault-checklist — tokenId 权限验证 + vault 控制器安全清单。部署前跑一遍，检查项一条条过，省得上线后才发现权限没锁。
+
+bap578-deploy-plan — BSC 主网部署顺序 + 命令模板。合约多了部署顺序容易搞错，这个帮你排好，一步步执行就行。
+
+bap578-test-template — Hardhat 测试骨架，专门覆盖权限校验和余额一致性。fee-on-transfer 那种边界 case 也考虑了。
+
+bap578-contract-idea-sprint — 你说一个想法，它帮你拆成一天能落地的合约实现计划。比如"做一个 BAP578 crash game adapter with treasury guardrails"，直接出任务清单。
+
+这不是调 API 的 wrapper。这是我们读了 BAP578 的合约结构之后，针对 adapter 模式、vault 权限、部署流程一个个写出来的。
+
+源码全部在这里：
+https://github.com/brief-onchain/skills-lab/tree/main/skills/lib-2-bap578-dev
+
+我们还做了一个 ERC-8004 Agent Registry 的 Skill——链上 Agent 身份注册。如果 BAP578 的 token-bound account 未来接上 8004 的注册表，每个 Agent NFT 就不只是有钱包，还有链上可验证的身份和能力声明。
+
+想法很简单：
+
+BAP578 给 Agent 身份。
+Skills 给 Agent 能力。
+8004 Registry 给 Agent 信誉。
+
+三层叠起来，才是完整的链上自主 Agent。
+
+这些模块的设计初衷就是降低 BAP578 开发者的上手门槛。如果协议层未来考虑官方推荐开发工具或者 Skill 注册机制，我们已经准备好了。
+
+随时可以聊。
+
+GitHub: https://github.com/brief-onchain/skills-lab
+
+---
+
 ## Bio 2（新增，SkillsHub 定位）
 
 SkillsHub — BSC 上 AI Agent 的开源技能库。14 个 Skill 已上线：行情数据、BAP578 合约开发、CZ 风格改写。一条命令装上就能用。 #BNBAgents
+
+---
+
+## 推文 — 生态扩张进展 【配图：tw-ecosystem-expansion.png】
+
+![Ecosystem Expansion](../assets/tw-ecosystem-expansion.png)
+
+一天装了 8 个 Skill，SkillsHub 现在有 20 个了。
+
+这次不只是加数量——是把整个 BSC 生态的关键能力都接进来了：
+
+新增 6 个生态技能（全部 Playground 可调用）：
+- BSC NFT Ops Guide — NFT 操作指南
+- Bitagent Bonding Playbook — Bonding Curve 实战手册
+- Multichain Portfolio Tracker — 多链资产追踪
+- PancakeSwap Trading Guard — Pancake 交易安全护栏
+- ERC-8004 Agent Registry — Agent 链上注册表
+- Prediction Market CLOB — 预测市场订单簿
+
+2 个老 Skill 从 backlog 转正为 live：
+- Open Interest Scan — 合约持仓量追踪
+- BSC RPC Fanout Check — 节点一致性检测
+
+验证流水线全过：
+✓ next build
+✓ tsc --noEmit
+✓ 批量 smoke test — 8 个新技能全部 success=true
+
+全部变更已通过 GitOps 推到 main，线上同步更新。
+
+从行情数据到合约开发，从 NFT 到预测市场，从 Meme 发射到多链追踪——SkillsHub 不是一个工具，是一整套能力层。
+
+下一步的方向也说清楚：SkillsHub 会做成一个开放的 Skill Marketplace。不只有我们自己做的，也会把社区里真正好用的开源 Skill 精选进来，统一展示、统一安装。
+
+原创的标 Original，社区精选的标 Curated，每个 Skill 都注明来源和协议。不抢别人的功劳，也不把来源藏着掖着。好的工具就该被更多人看到。
+
+你想找 BSC 上能用的 AI Agent Skill，来这里就够了。
+
+你的 Agent 缺什么能力？评论区说。我来做。
+
+#BNBChain #AI #SkillsHub #BuildInPublic
 
 ---
 

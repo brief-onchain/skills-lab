@@ -1,0 +1,16 @@
+{
+  "name": "@skillshub/bap578-adapter-blueprint",
+  "version": "0.1.0",
+  "description": "Generates a minimal adapter contract blueprint with vault funding/withdraw controls.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "bap578-adapter-blueprint": "bin/cli.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
