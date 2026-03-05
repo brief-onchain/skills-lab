@@ -44,8 +44,8 @@
         "symbol": "BTCUSDT"
       },
       "install": {
-        "command": "npx @bsc-skills/price-snapshot",
-        "status": "planned"
+        "command": "Use Playground (local runtime).",
+        "status": "ready-local"
       }
     },
     {
@@ -60,8 +60,8 @@
         "limit": 8
       },
       "install": {
-        "command": "npx @bsc-skills/top-movers-radar",
-        "status": "planned"
+        "command": "Use Playground (local runtime).",
+        "status": "ready-local"
       }
     },
     {
@@ -77,8 +77,8 @@
         "limit": 24
       },
       "install": {
-        "command": "npx @bsc-skills/kline-brief",
-        "status": "planned"
+        "command": "Use Playground (local runtime).",
+        "status": "ready-local"
       }
     },
     {
@@ -92,8 +92,8 @@
         "symbol": "BTCUSDT"
       },
       "install": {
-        "command": "npx @bsc-skills/funding-watch",
-        "status": "planned"
+        "command": "Use Playground (local runtime).",
+        "status": "ready-local"
       }
     },
     {
@@ -107,8 +107,8 @@
         "symbol": "SOLUSDT"
       },
       "install": {
-        "command": "npx @bsc-skills/symbol-status-checker",
-        "status": "planned"
+        "command": "Use Playground (local runtime).",
+        "status": "ready-local"
       }
     },
     {
@@ -140,8 +140,8 @@
         "budgetBnb": 0.01
       },
       "install": {
-        "command": "npx @skillshub/four-meme-create-pipeline",
-        "status": "planned"
+        "command": "Read SKILL.md: skills/lib-3-ecosystem-intake/skills/four-meme-create-pipeline/SKILL.md",
+        "status": "guide"
       }
     },
     {
@@ -157,8 +157,8 @@
         "amountBnb": 0.2
       },
       "install": {
-        "command": "npx @skillshub/four-meme-trade-playbook",
-        "status": "planned"
+        "command": "Read SKILL.md: skills/lib-3-ecosystem-intake/skills/four-meme-trade-playbook/SKILL.md",
+        "status": "guide"
       }
     },
     {
@@ -174,8 +174,8 @@
         "maxCapitalBnb": 0.6
       },
       "install": {
-        "command": "npx @skillshub/four-meme-agentic-ops",
-        "status": "planned"
+        "command": "Read SKILL.md: skills/lib-3-ecosystem-intake/skills/four-meme-agentic-ops/SKILL.md",
+        "status": "guide"
       }
     },
     {
@@ -196,8 +196,8 @@
         "riskTier": "medium"
       },
       "install": {
-        "command": "npx @skillshub/four-meme-one-stop-bsc",
-        "status": "planned"
+        "command": "Read SKILL.md: skills/lib-3-ecosystem-intake/skills/four-meme-one-stop-bsc/SKILL.md",
+        "status": "guide"
       }
     },
     {
@@ -213,8 +213,8 @@
         "operator": "0x..."
       },
       "install": {
-        "command": "npx @skillshub/erc8004-fast-auth",
-        "status": "planned"
+        "command": "Read SKILL.md: skills/lib-3-ecosystem-intake/skills/erc8004-fast-auth/SKILL.md",
+        "status": "guide"
       }
     }
   ],

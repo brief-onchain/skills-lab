@@ -1,98 +1,41 @@
-# SkillsHub: Install Skills Fast
+# SkillsHub: Use Skills Fast (No npm Required)
 
-这个仓库面向“安装和使用 Skills”。
+这个仓库当前以本地使用为主，**不依赖统一 npm 发布**。
 
-## 0. 3 条最短安装命令
+## 1. 本地启动
 
-```bash
-npx @skillshub/price-snapshot
-npx @skillshub/top-movers-radar
-npx @skillshub/ai-quick-chat
-npx @skillshub/cz-style-rewrite
-npx @skillshub/bap578-adapter-blueprint
-```
-
-## 1. 前置要求
-
+前置：
 - Node.js `>= 18`
 - npm
 
-## 2. 一键安装单个 Skill（npx）
-
-示例：
+运行：
 
 ```bash
-npx @skillshub/price-snapshot
+npm run dev
 ```
 
-## 3. 可安装 Skills 列表
+打开：`http://localhost:4173`
 
-### Binance Market (Live + Guide)
+## 2. 当前推荐使用方式
 
-```bash
-npx @skillshub/price-snapshot
-npx @skillshub/top-movers-radar
-npx @skillshub/ai-quick-chat
-npx @skillshub/cz-style-rewrite
-npx @skillshub/kline-brief
-npx @skillshub/symbol-status
-npx @skillshub/funding-watch
-npx @skillshub/funding-basis-carry-scan
-npx @skillshub/crowding-risk-scan
-npx @skillshub/liquidation-heatmap
-npx @skillshub/bsc-honeypot-check
-npx @skillshub/open-interest-scan
-npx @skillshub/bsc-rpc-fanout-check
-```
+- 本地可运行技能：直接在网页 Playground 里选择技能并点击 `Run Skill`
+- 外部生态技能：按各自上游命令安装/接入（示例：`npx skills add four-meme-community/four-meme-ai`）
+- 文档型技能：查看对应 `SKILL.md` 按步骤执行
 
-### BAP578 Dev (Guide)
-
-```bash
-npx @skillshub/bap578-adapter-blueprint
-npx @skillshub/bap578-vault-checklist
-npx @skillshub/bap578-deploy-plan
-npx @skillshub/bap578-test-template
-npx @skillshub/bap578-contract-idea-sprint
-```
-
-### Ecosystem Intake
-
-```bash
-npx @skillshub/bsc-nft-ops-guide
-npx @skillshub/bitagent-bonding-playbook
-npx @skillshub/multichain-portfolio-tracker
-npx @skillshub/pancakeswap-trading-guard
-npx @skillshub/erc8004-agent-registry
-npx @skillshub/erc8004-fast-auth
-npx @skillshub/four-meme-create-pipeline
-npx @skillshub/four-meme-trade-playbook
-npx @skillshub/four-meme-agentic-ops
-npx @skillshub/four-meme-one-stop-bsc
-npx @skillshub/prediction-market-clob
-npx @skillshub/kryptogo-cluster-radar
-npx skills add four-meme-community/four-meme-ai
-```
-
-## 4. 如何挑选 Skill
-
-- 想要行情/市场数据：优先用 `price-snapshot`、`top-movers-radar`、`kline-brief`
-- 想要交易状态/风控信息：用 `symbol-status`、`funding-watch`
-- 想要 BAP578 合约开发辅助：用 `bap578-*`
-
-## 5. 失败排查
-
-如果安装失败，按顺序检查：
-
-1. `node -v` 是否 >= 18
-2. `npm config get registry` 是否可用
-3. 切换镜像后重试（如公司网络/代理）
-
-## 6. 本地文档索引（可选）
-
-每个 Skill 的本地说明在：
+## 3. 技能文档位置
 
 - `skills/lib-*/skills/<skill-id>/SKILL.md`
 
 技能元信息来源：
-
 - `skills/lib-*/library.json`
+- `data/skills.json`
+
+## 4. 为什么不再默认写 npx @skillshub/*
+
+因为目前技能来源混合（自有 + 第三方），且并非所有技能都已发布为 npm 可执行包。
+为避免误导，页面和文档已改为“按来源使用”。
+
+## 5. 后续可选（不是当前必需）
+
+如果以后要统一入口，可以再增加一个安装器包（例如 `npx @skillshub/installer`），
+但这不是当前运行本仓库的必要条件。

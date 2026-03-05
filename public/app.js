@@ -7,8 +7,8 @@ const i18n = {
     viewOss: 'View Open Source Intake',
     diffTracks: 'Differentiated Skill Tracks',
     diffDesc: 'Focused on data analytics and risk intelligence — areas underserved in the current BSC ecosystem.',
-    installLocally: 'Install Locally via npx',
-    installDesc: 'Run any skill module directly from your terminal — no setup required.',
+    installLocally: 'Usage by Source',
+    installDesc: 'No unified npm install yet. Use Playground for local skills, and follow upstream commands for external integrations.',
     starterPack: 'Starter Skills Pack',
     starterTag: 'read-only / low-risk / fast ship',
     playgroundTitle: 'Playground',
@@ -35,8 +35,8 @@ const i18n = {
     viewOss: '查看开源项目引入',
     diffTracks: '差异化技能路线',
     diffDesc: '聚焦数据分析和风险情报 — 当前 BSC 生态中服务不足的领域。',
-    installLocally: '通过 npx 本地安装',
-    installDesc: '直接从终端运行任何技能模块 — 无需配置。',
+    installLocally: '按来源使用',
+    installDesc: '当前没有统一 npm 安装入口。本地技能优先在 Playground 使用，外部集成按上游命令执行。',
     starterPack: '入门技能包',
     starterTag: '只读 / 低风险 / 快速上线',
     playgroundTitle: '试验场',
@@ -160,7 +160,7 @@ function setSkillInputFromCurrent() {
     return;
   }
   refs.skillInput.value = safeJson(skill.inputExample || {});
-  refs.installHint.textContent = skill.install?.command || 'npx @bsc-skills/your-skill';
+  refs.installHint.textContent = skill.install?.command || 'Use Playground: choose a skill, then click "Run Skill".';
 }
 
 function renderExcluded() {
