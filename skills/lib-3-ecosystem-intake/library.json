@@ -235,6 +235,33 @@
         "strategy": "limit_ladder"
       },
       "installCommand": "npx @skillshub/prediction-market-clob"
+    },
+    {
+      "id": "kryptogo-cluster-radar",
+      "name": "KryptoGO Cluster Radar (Read-Only)",
+      "description": "Adapts KryptoGO's cluster/whale/smart-money analysis workflow for BSC-focused token intelligence; this integration only includes analysis modules.",
+      "category": "Ecosystem",
+      "version": "0.1.0",
+      "author": "skillshub-curation",
+      "mode": "guide",
+      "provenance": "adapted",
+      "sourceAttribution": "kryptogo/kryptogo-meme-trader (analysis modules)",
+      "sourceUrl": "https://github.com/kryptogo/kryptogo-meme-trader/tree/main/skill",
+      "sourceLicense": "MIT",
+      "maintainedBy": "SkillsHub",
+      "inputExample": {
+        "chainId": 56,
+        "tokenAddress": "0x...",
+        "focus": "cluster_accumulation",
+        "timeframes": [
+          "15m",
+          "1h",
+          "4h",
+          "1d"
+        ],
+        "includeSignalDashboard": true
+      },
+      "installCommand": "npx @skillshub/kryptogo-cluster-radar"
     }
   ],
   "excludedDirections": [
@@ -257,6 +284,12 @@
       "name": "Prediction CLOB Guard Module",
       "sourceTag": "ecosystem",
       "adaptation": "Order placement guardrails and post-trade reconciliation."
+    },
+    {
+      "name": "KryptoGO Cluster Radar (Read-Only)",
+      "repo": "https://github.com/kryptogo/kryptogo-meme-trader",
+      "sourceTag": "ecosystem",
+      "adaptation": "Retains whale/cluster/smart-money analytics and integrates only the analysis modules for marketplace showcase."
     }
   ]
 }
