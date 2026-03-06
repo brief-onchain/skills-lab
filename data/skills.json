@@ -112,6 +112,26 @@
       }
     },
     {
+      "id": "dev-launch-streak-radar",
+      "name": "Dev Launch Streak Radar",
+      "track": "quick-build",
+      "category": "Onchain Risk",
+      "summary": "Onchain-first dev launch streak detector (no API required by default), with optional agent-configured API enrichment.",
+      "overlapPolicy": "Read-only analysis. No trade or write operation.",
+      "inputExample": {
+        "launcher": "0x1111111111111111111111111111111111111111",
+        "days": 7,
+        "minStreakDays": 3,
+        "guideOnly": false,
+        "includeDexScreener": false,
+        "extraApis": []
+      },
+      "install": {
+        "command": "Use in your agent workflow (free default: public RPC + DexScreener).",
+        "status": "ready-general"
+      }
+    },
+    {
       "id": "four-meme-ai",
       "name": "Four.Meme Agent Skill",
       "track": "ecosystem-intake",

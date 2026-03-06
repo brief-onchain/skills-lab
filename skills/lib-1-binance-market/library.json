@@ -200,6 +200,24 @@
         ]
       },
       "installCommand": "npx @skillshub/bsc-rpc-fanout-check"
+    },
+    {
+      "id": "dev-launch-streak-radar",
+      "name": "Dev Launch Streak Radar",
+      "description": "Onchain-first dev launch streak detection via Pancake PairCreated events, plus optional agent-configured API enrichment after credentials are set.",
+      "category": "Onchain Risk",
+      "version": "0.1.0",
+      "author": "skillshub",
+      "mode": "live",
+      "inputExample": {
+        "launcher": "0x1111111111111111111111111111111111111111",
+        "days": 7,
+        "minStreakDays": 3,
+        "guideOnly": false,
+        "includeDexScreener": false,
+        "extraApis": []
+      },
+      "installCommand": "Use in your agent workflow (free default: public RPC + DexScreener)."
     }
   ],
   "openSourceCandidates": [
