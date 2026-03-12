@@ -58,6 +58,8 @@ export interface OpenSourceCandidate {
   sourceTag: string;
   adaptation: string;
   localMirrorPath?: string;
+  featuredModule?: boolean;
+  researchNote?: string;
 }
 
 export interface CatalogPayload {

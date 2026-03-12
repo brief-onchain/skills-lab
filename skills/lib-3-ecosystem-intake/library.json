@@ -511,6 +511,14 @@
       "repo": "https://github.com/kryptogo/kryptogo-meme-trader",
       "sourceTag": "ecosystem",
       "adaptation": "Retains whale/cluster/smart-money analytics and integrates only the analysis modules for marketplace showcase."
+    },
+    {
+      "name": "BNB Chain MCP",
+      "repo": "https://github.com/bnb-chain/bnbchain-mcp",
+      "sourceTag": "ecosystem",
+      "adaptation": "Official BNB Chain MCP intake path for onchain analysis, ERC-8004 agent flows, Greenfield, and docs-first read-only onboarding inside the ecosystem track.",
+      "featuredModule": true,
+      "researchNote": "Web-researched official BNB Chain ecosystem candidate."
     }
   ]
 }

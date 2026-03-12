@@ -239,6 +239,22 @@
       "name": "Market Data Module",
       "sourceTag": "intake",
       "adaptation": "Data read-only module for fast launch."
+    },
+    {
+      "name": "TradingView MCP Server",
+      "repo": "https://github.com/atilaaahmettaner/tradingview-mcp",
+      "sourceTag": "binance-market",
+      "adaptation": "Adapt as a read-only signal layer for multi-timeframe indicators, chart snapshots, and watchlist screening ahead of Binance trade decisions.",
+      "featuredModule": true,
+      "researchNote": "Web-researched candidate for the Binance signal lane."
+    },
+    {
+      "name": "Binance MCP Server (Public Data)",
+      "repo": "https://github.com/danishashko/binance-mcp-server",
+      "sourceTag": "binance-market",
+      "adaptation": "Use as an external MCP bridge for public spot market data, then keep execution disabled and align tools with local price, kline, and orderbook skills.",
+      "featuredModule": true,
+      "researchNote": "Web-researched candidate for public Binance market data expansion."
     }
   ]
 }
