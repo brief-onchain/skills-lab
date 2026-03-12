@@ -33,9 +33,21 @@ export default function OssIntake() {
                 <span className="text-xs font-mono text-text-sub/50">{repo.sourceTag}</span>
               </div>
               <p className="text-sm text-text-sub mb-6 min-h-[3rem]">{repo.adaptation}</p>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-gold"></span>
-                <span className="text-xs font-mono text-text-sub">{t.oss.intakeTrack}</span>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-gold"></span>
+                  <span className="text-xs font-mono text-text-sub">{t.oss.intakeTrack}</span>
+                </div>
+                {repo.repo ? (
+                  <a
+                    href={repo.repo}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs font-mono text-gold hover:text-white transition-colors"
+                  >
+                    {t.oss.viewRepo}
+                  </a>
+                ) : null}
               </div>
             </div>
           ))}

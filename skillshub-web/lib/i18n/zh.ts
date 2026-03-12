@@ -94,6 +94,18 @@ const zh: TranslationKeys = {
     title: '开源项目引入',
     subtitle: '正在适配到 BSC 技能生态的精选开源项目。',
     intakeTrack: '内部引入通道',
+    viewRepo: '查看仓库',
+  },
+
+  research: {
+    eyebrow: 'Web Research Radar',
+    title: '新模块雷达',
+    subtitle: '把这次网上调研到、并且和当前 Binance / BNB Chain / Agent tooling 方向贴合的候选，先以前端独立模块展示出来。',
+    modulesLabel: '个模块',
+    researched: '已调研',
+    whyNow: '为什么现在值得看',
+    defaultNote: '这是近期调研后判断与当前路线最贴近的候选。',
+    viewSource: '查看来源',
   },
 
   // SkillDetail page

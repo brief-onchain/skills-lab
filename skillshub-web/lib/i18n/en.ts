@@ -92,6 +92,18 @@ const en = {
     title: 'OPEN SOURCE INTAKE',
     subtitle: 'Curated open-source projects being adapted for the BSC skill ecosystem.',
     intakeTrack: 'Internal Intake Track',
+    viewRepo: 'VIEW REPO',
+  },
+
+  research: {
+    eyebrow: 'Web Research Radar',
+    title: 'Fresh Module Radar',
+    subtitle: 'Web-sourced modules that fit the current Binance, BNB Chain, and agent-tooling roadmap. Shown as a separate frontend block before deeper intake work.',
+    modulesLabel: 'MODULES',
+    researched: 'researched',
+    whyNow: 'WHY NOW',
+    defaultNote: 'Recent fit discovered via repo research for the current roadmap.',
+    viewSource: 'VIEW SOURCE',
   },
 
   // SkillDetail page
