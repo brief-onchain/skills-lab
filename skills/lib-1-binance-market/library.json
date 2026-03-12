@@ -65,6 +65,20 @@
       "installCommand": "npx @skillshub/top-movers-radar"
     },
     {
+      "id": "orderbook-pulse",
+      "name": "Orderbook Pulse",
+      "description": "Summarizes best bid/ask spread, top-level depth notional, and bid-vs-ask pressure for one spot pair.",
+      "category": "Microstructure",
+      "version": "0.1.0",
+      "author": "skillshub",
+      "mode": "live",
+      "inputExample": {
+        "symbol": "BTCUSDT",
+        "limit": 20
+      },
+      "installCommand": "Use Playground (local runtime)."
+    },
+    {
       "id": "kline-brief",
       "name": "Kline Brief",
       "description": "Summarizes recent candles and short-term trend percentage.",

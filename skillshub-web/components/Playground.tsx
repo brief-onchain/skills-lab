@@ -5,6 +5,7 @@ import { ApiClient } from '@/lib/api';
 import { Skill, PlaygroundResponse } from '@/lib/types';
 import { useTranslation } from '@/lib/i18n';
 import gsap from 'gsap';
+import { groupSkillsBySection, SkillSectionKey } from '@/lib/skillSections';
 
 export default function Playground() {
   const { t } = useTranslation();
@@ -19,6 +20,20 @@ export default function Playground() {
   
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const sectionLabel = (key: SkillSectionKey) => {
+    switch (key) {
+      case 'binance':
+        return t.skills.sectionBinanceTitle;
+      case 'fourMeme':
+        return t.skills.sectionFourMemeTitle;
+      case 'bap578':
+        return t.skills.sectionBap578Title;
+      case 'ecosystem':
+      default:
+        return t.skills.sectionEcosystemTitle;
+    }
+  };
+
   useEffect(() => {
     ApiClient.getSkills().then(data => {
       setSkills(data);
@@ -28,6 +43,8 @@ export default function Playground() {
       }
     });
   }, []);
+
+  const groupedSkills = groupSkillsBySection(skills);
 
   useEffect(() => {
     if (!selectedSkillId) {
@@ -103,8 +120,12 @@ export default function Playground() {
                 onChange={(e) => setSelectedSkillId(e.target.value)}
                 className="w-full bg-panel border border-white/10 text-text-main p-3 rounded focus:border-gold focus:outline-none transition-colors"
               >
-                {skills.map(s => (
-                  <option key={s.id} value={s.id}>{s.name} ({s.category})</option>
+                {groupedSkills.map(section => (
+                  <optgroup key={section.key} label={sectionLabel(section.key)}>
+                    {section.skills.map(s => (
+                      <option key={s.id} value={s.id}>{s.name} ({s.category})</option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
             </div>

@@ -9,6 +9,14 @@ function normalizeSymbol(value: unknown, fallback = 'BTCUSDT') {
     .replace(/[^A-Z0-9]/g, '');
 }
 
+function normalizeDepthLimit(value: unknown) {
+  const allowed = [5, 10, 20, 50, 100];
+  const raw = Number(value || 20);
+  return allowed.reduce((best, current) =>
+    Math.abs(current - raw) < Math.abs(best - raw) ? current : best
+  );
+}
+
 async function fetchJson(url: string, timeoutMs = 4500) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -329,6 +337,24 @@ function fallbackKlineBrief(symbol: string, interval: string, limit: number) {
   };
 }
 
+function fallbackOrderbookPulse(symbol: string, limit: number) {
+  return {
+    source: 'fallback',
+    symbol,
+    limit,
+    bestBid: symbol === 'BTCUSDT' ? 90000 : 100,
+    bestAsk: symbol === 'BTCUSDT' ? 90010 : 100.1,
+    midPrice: symbol === 'BTCUSDT' ? 90005 : 100.05,
+    spread: 10,
+    spreadBps: 1.11,
+    bidDepthNotional: 2800000,
+    askDepthNotional: 2500000,
+    depthImbalance: 0.0566,
+    pressure: 'bid-heavy',
+    note: 'Depth endpoint unavailable; showing fallback microstructure snapshot.'
+  };
+}
+
 function fallbackOpenInterestScan(symbol: string, period: string) {
   return {
     source: 'fallback',
@@ -525,6 +551,85 @@ async function runFundingBasisCarryScan(input: Record<string, unknown>) {
     markPrice: premium?.markPrice ? Number(premium.markPrice) : null,
     indexPrice: premium?.indexPrice ? Number(premium.indexPrice) : null,
     note: 'Signal only. Keep manual confirmation + strict position/risk limits before execution.'
+  };
+}
+
+async function runOrderbookPulse(input: Record<string, unknown>) {
+  const symbol = normalizeSymbol(input.symbol || 'BTCUSDT');
+  const limit = normalizeDepthLimit(input.limit);
+
+  let depth: any;
+  try {
+    depth = await fetchJson(`https://api.binance.com/api/v3/depth?symbol=${symbol}&limit=${limit}`);
+  } catch {
+    return fallbackOrderbookPulse(symbol, limit);
+  }
+
+  const bids = Array.isArray(depth?.bids) ? depth.bids : [];
+  const asks = Array.isArray(depth?.asks) ? depth.asks : [];
+  if (!bids.length || !asks.length) {
+    return fallbackOrderbookPulse(symbol, limit);
+  }
+
+  const bestBid = Number(bids[0]?.[0] || 0);
+  const bestAsk = Number(asks[0]?.[0] || 0);
+  const spread = Number((bestAsk - bestBid).toFixed(8));
+  const midPrice = Number((((bestBid + bestAsk) / 2) || 0).toFixed(8));
+  const spreadBps = midPrice
+    ? Number(((spread / midPrice) * 10000).toFixed(3))
+    : null;
+
+  const bidDepthNotional = Number(
+    bids
+      .slice(0, limit)
+      .reduce((sum: number, [price, qty]: [string, string]) => sum + Number(price) * Number(qty), 0)
+      .toFixed(2)
+  );
+  const askDepthNotional = Number(
+    asks
+      .slice(0, limit)
+      .reduce((sum: number, [price, qty]: [string, string]) => sum + Number(price) * Number(qty), 0)
+      .toFixed(2)
+  );
+
+  const totalNotional = bidDepthNotional + askDepthNotional;
+  const depthImbalance = totalNotional
+    ? Number(((bidDepthNotional - askDepthNotional) / totalNotional).toFixed(4))
+    : 0;
+
+  let pressure = 'balanced';
+  if (depthImbalance >= 0.08) {
+    pressure = 'bid-heavy';
+  } else if (depthImbalance <= -0.08) {
+    pressure = 'ask-heavy';
+  }
+
+  return {
+    source: 'binance-spot-depth',
+    symbol,
+    limit,
+    bestBid,
+    bestAsk,
+    midPrice,
+    spread,
+    spreadBps,
+    bidDepthNotional,
+    askDepthNotional,
+    depthImbalance,
+    pressure,
+    topLevels: {
+      bids: bids.slice(0, 3).map(([price, qty]: [string, string]) => ({
+        price: Number(price),
+        qty: Number(qty),
+        notional: Number((Number(price) * Number(qty)).toFixed(2))
+      })),
+      asks: asks.slice(0, 3).map(([price, qty]: [string, string]) => ({
+        price: Number(price),
+        qty: Number(qty),
+        notional: Number((Number(price) * Number(qty)).toFixed(2))
+      }))
+    },
+    note: 'Use with trend, liquidity, and volatility context. Do not trade from depth imbalance alone.'
   };
 }
 
@@ -1408,6 +1513,10 @@ async function runLocalSkill(skillId: string, input: Record<string, unknown>) {
         .slice(0, limit);
 
       return { quoteAsset, minQuoteVolume, sortBy, movers };
+    }
+
+    case 'orderbook-pulse': {
+      return runOrderbookPulse(input);
     }
 
     case 'kline-brief': {
