@@ -6,6 +6,7 @@ import TopBar from '@/components/TopBar';
 import Hero from '@/components/Hero';
 import StrategyPanel from '@/components/StrategyPanel';
 import SkillsGrid from '@/components/SkillsGrid';
+import ResearchRadar from '@/components/ResearchRadar';
 import Playground from '@/components/Playground';
 import OssIntake from '@/components/OssIntake';
 import InstallGuide from '@/components/InstallGuide';
@@ -25,6 +26,7 @@ export default function Home() {
       <Hero />
       <StrategyPanel />
       <SkillsGrid />
+      <ResearchRadar />
       <Playground />
       <OssIntake />
       <InstallGuide />
