@@ -182,6 +182,62 @@
       "installCommand": "npx @skillshub/bsc-honeypot-check"
     },
     {
+      "id": "query-token-info",
+      "name": "Query Token Info",
+      "description": "Searches token metadata, live market stats, and candle data from Binance Web3 public endpoints with BSC-first defaults.",
+      "category": "Onchain Data",
+      "version": "0.1.0",
+      "author": "skillshub-curation",
+      "mode": "live",
+      "provenance": "adapted",
+      "sourceAttribution": "Binance Web3 public market endpoints",
+      "sourceUrl": "https://web3.binance.com",
+      "maintainedBy": "SkillsHub",
+      "inputExample": {
+        "action": "overview",
+        "chainId": "56",
+        "contractAddress": "0x55d398326f99059ff775485246999027b3197955"
+      },
+      "installCommand": "Use Playground (local runtime)."
+    },
+    {
+      "id": "query-address-info",
+      "name": "Query Address Info",
+      "description": "Pulls wallet token positions, 24h changes, and rough USD exposure for a BSC address using Binance Web3 public endpoints.",
+      "category": "Onchain Data",
+      "version": "0.1.0",
+      "author": "skillshub-curation",
+      "mode": "live",
+      "provenance": "adapted",
+      "sourceAttribution": "Binance Web3 public address endpoints",
+      "sourceUrl": "https://web3.binance.com",
+      "maintainedBy": "SkillsHub",
+      "inputExample": {
+        "address": "0x0000000000000000000000000000000000000001",
+        "chainId": "56",
+        "limit": 10
+      },
+      "installCommand": "Use Playground (local runtime)."
+    },
+    {
+      "id": "query-token-audit",
+      "name": "Query Token Audit",
+      "description": "Runs pre-trade token risk checks for honeypot, contract, and tax issues using Binance Web3 public audit endpoints.",
+      "category": "Security",
+      "version": "0.1.0",
+      "author": "skillshub-curation",
+      "mode": "live",
+      "provenance": "adapted",
+      "sourceAttribution": "Binance Web3 public token audit endpoint",
+      "sourceUrl": "https://web3.binance.com",
+      "maintainedBy": "SkillsHub",
+      "inputExample": {
+        "contractAddress": "0x55d398326f99059ff775485246999027b3197955",
+        "chainId": "56"
+      },
+      "installCommand": "Use Playground (local runtime)."
+    },
+    {
       "id": "open-interest-scan",
       "name": "Open Interest Scan",
       "description": "Tracks futures open interest and taker flow changes for one symbol.",

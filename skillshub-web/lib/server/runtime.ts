@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { loadSkillIds } from '@/lib/server/catalog';
 import { getLlmConfig, getRpcEndpoints } from '@/lib/server/env';
 import czStyleProfile from '@/lib/server/data/cz_style_profile.json';
@@ -9,6 +10,18 @@ function normalizeSymbol(value: unknown, fallback = 'BTCUSDT') {
     .replace(/[^A-Z0-9]/g, '');
 }
 
+function normalizeChainId(value: unknown, fallback = '56') {
+  const raw = String(value || fallback).trim();
+  const allowed = new Set(['1', '56', '8453', 'CT_501']);
+  return allowed.has(raw) ? raw : fallback;
+}
+
+function clampNumber(value: unknown, min: number, max: number, fallback: number) {
+  const raw = Number(value);
+  if (!Number.isFinite(raw)) return fallback;
+  return Math.min(max, Math.max(min, raw));
+}
+
 function normalizeDepthLimit(value: unknown) {
   const allowed = [5, 10, 20, 50, 100];
   const raw = Number(value || 20);
@@ -17,13 +30,18 @@ function normalizeDepthLimit(value: unknown) {
   );
 }
 
-async function fetchJson(url: string, timeoutMs = 4500) {
+async function fetchJsonWithInit(url: string, init: RequestInit = {}, timeoutMs = 4500) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
+    const headers = new Headers(init.headers || {});
+    if (!headers.has('User-Agent')) {
+      headers.set('User-Agent', 'skillshub-web/0.1.0');
+    }
     const response = await fetch(url, {
+      ...init,
       signal: controller.signal,
-      headers: { 'User-Agent': 'skillshub-web/0.1.0' }
+      headers
     });
     if (!response.ok) {
       throw new Error(`Upstream ${response.status}`);
@@ -32,6 +50,10 @@ async function fetchJson(url: string, timeoutMs = 4500) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+async function fetchJson(url: string, timeoutMs = 4500) {
+  return fetchJsonWithInit(url, {}, timeoutMs);
 }
 
 async function fetchRpc(endpoint: string, method: string, params: unknown[] = [], timeoutMs = 4500) {
@@ -94,6 +116,52 @@ function isEvmAddress(value: string) {
 function toNumberSafe(value: unknown, fallback = 0) {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
+}
+
+function buildUrl(base: string, params: Record<string, string | number | undefined>) {
+  const url = new URL(base);
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === '') continue;
+    url.searchParams.set(key, String(value));
+  }
+  return url.toString();
+}
+
+function normalizeKlinePlatform(chainId: string) {
+  switch (chainId) {
+    case '1':
+      return 'eth';
+    case '8453':
+      return 'base';
+    case 'CT_501':
+      return 'solana';
+    case '56':
+    default:
+      return 'bsc';
+  }
+}
+
+function normalizeKlineInterval(value: unknown) {
+  const raw = String(value || '15min').trim();
+  const allowed = new Set([
+    '1s',
+    '1min',
+    '3min',
+    '5min',
+    '15min',
+    '30min',
+    '1h',
+    '2h',
+    '4h',
+    '6h',
+    '8h',
+    '12h',
+    '1d',
+    '3d',
+    '1w',
+    '1m'
+  ]);
+  return allowed.has(raw) ? raw : '15min';
 }
 
 function extractChatReply(parsed: any) {
@@ -1173,10 +1241,20 @@ interface IAgentVault {
 contract ${contractName} {
   address public immutable nfa;
   IAgentVault public immutable vault;
+  uint256 private _locked;
+  event NativeFunded(uint256 indexed tokenId, address indexed sender, uint256 amount);
+  event NativeWithdrawn(uint256 indexed tokenId, address indexed recipient, uint256 amount);
 
   modifier onlyOperator(uint256 tokenId) {
     require(${nfaInterface}(nfa).ownerOf(tokenId) == msg.sender, 'not operator');
     _;
+  }
+
+  modifier nonReentrant() {
+    require(_locked == 0, 'reentrancy');
+    _locked = 1;
+    _;
+    _locked = 0;
   }
 
   constructor(address nfa_, address vault_) {
@@ -1185,12 +1263,16 @@ contract ${contractName} {
     vault = IAgentVault(vault_);
   }
 
-  function fund(uint256 tokenId) external payable {
+  function fund(uint256 tokenId) external payable nonReentrant {
     require(msg.value > 0, 'zero amount');
+    emit NativeFunded(tokenId, msg.sender, msg.value);
     vault.creditNative{ value: msg.value }(tokenId);
   }
 
-  function withdraw(uint256 tokenId, uint256 amount, address to) external onlyOperator(tokenId) {
+  function withdraw(uint256 tokenId, uint256 amount, address to) external onlyOperator(tokenId) nonReentrant {
+    require(to != address(0), 'zero to');
+    require(amount > 0, 'zero amount');
+    emit NativeWithdrawn(tokenId, to, amount);
     vault.debitNative(tokenId, amount, to);
   }
 }`;
@@ -1456,6 +1538,342 @@ function predictionMarketClobGuide(input: Record<string, unknown>) {
   };
 }
 
+async function runQueryTokenInfo(input: Record<string, unknown>) {
+  const skillId = 'query-token-info';
+  const action = String(input.action || 'overview').toLowerCase();
+  const chainId = normalizeChainId(input.chainId, '56');
+  const keyword = String(input.keyword || input.query || '').trim();
+  const orderBy = String(input.orderBy || 'volume24h').trim();
+  const searchLimit = clampNumber(input.limit, 1, 25, 10);
+  let contractAddress = String(input.contractAddress || input.address || '').trim();
+
+  if (action === 'search') {
+    if (!keyword) {
+      throw new Error('query-token-info search requires keyword');
+    }
+
+    const searchUrl = buildUrl(
+      'https://web3.binance.com/bapi/defi/v5/public/wallet-direct/buw/wallet/market/token/search',
+      {
+        keyword,
+        chainIds: chainId,
+        orderBy
+      }
+    );
+    const searchResp = await fetchJsonWithInit(
+      searchUrl,
+      {
+        headers: {
+          'Accept-Encoding': 'identity',
+          'User-Agent': 'binance-web3/1.0 (Skill)'
+        }
+      },
+      6500
+    );
+    const tokens = Array.isArray(searchResp?.data) ? searchResp.data : [];
+
+    return {
+      skillId,
+      action,
+      chainId,
+      keyword,
+      orderBy,
+      total: tokens.length,
+      tokens: tokens.slice(0, searchLimit).map((item: any) => ({
+        chainId: String(item.chainId || chainId),
+        contractAddress: String(item.contractAddress || ''),
+        tokenId: String(item.tokenId || ''),
+        name: String(item.name || ''),
+        symbol: String(item.symbol || ''),
+        price: toNumberSafe(item.price, 0),
+        change24hPercent: toNumberSafe(item.percentChange24h, 0),
+        volume24h: toNumberSafe(item.volume24h, 0),
+        marketCap: toNumberSafe(item.marketCap, 0),
+        liquidity: toNumberSafe(item.liquidity, 0),
+        holdersTop10Percent: toNumberSafe(item.holdersTop10Percent, 0),
+        riskLevel: item.riskLevel || null,
+        links: Array.isArray(item.links) ? item.links : []
+      }))
+    };
+  }
+
+  if (!contractAddress) {
+    if (!keyword) {
+      throw new Error('query-token-info overview/kline requires contractAddress or keyword');
+    }
+
+    const searchUrl = buildUrl(
+      'https://web3.binance.com/bapi/defi/v5/public/wallet-direct/buw/wallet/market/token/search',
+      {
+        keyword,
+        chainIds: chainId,
+        orderBy
+      }
+    );
+    const searchResp = await fetchJsonWithInit(
+      searchUrl,
+      {
+        headers: {
+          'Accept-Encoding': 'identity',
+          'User-Agent': 'binance-web3/1.0 (Skill)'
+        }
+      },
+      6500
+    );
+    const tokens = Array.isArray(searchResp?.data) ? searchResp.data : [];
+    const first = tokens.find((item: any) => String(item.chainId || '') === chainId) || tokens[0];
+    if (!first?.contractAddress) {
+      throw new Error(`No token match found for keyword "${keyword}" on chain ${chainId}`);
+    }
+    contractAddress = String(first.contractAddress);
+  }
+
+  if (action === 'kline') {
+    const interval = normalizeKlineInterval(input.interval);
+    const limit = clampNumber(input.limit, 5, 500, 48);
+    const to = clampNumber(input.to, 1, Number.MAX_SAFE_INTEGER, Date.now());
+    const klineUrl = buildUrl('https://dquery.sintral.io/u-kline/v1/k-line/candles', {
+      address: contractAddress,
+      platform: normalizeKlinePlatform(chainId),
+      interval,
+      limit,
+      to,
+      pm: input.pm ? String(input.pm) : undefined
+    });
+    const klineResp = await fetchJsonWithInit(
+      klineUrl,
+      {
+        headers: {
+          'Accept-Encoding': 'identity',
+          'User-Agent': 'binance-web3/1.0 (Skill)'
+        }
+      },
+      6500
+    );
+    const candles = Array.isArray(klineResp?.data) ? klineResp.data : [];
+    const first = candles[0];
+    const last = candles[candles.length - 1];
+    const open = Array.isArray(first) ? toNumberSafe(first[0], 0) : 0;
+    const close = Array.isArray(last) ? toNumberSafe(last[3], 0) : 0;
+
+    return {
+      skillId,
+      action,
+      chainId,
+      contractAddress,
+      interval,
+      candles: candles.length,
+      priceChangePercent:
+        open > 0 && close > 0 ? Number((((close - open) / open) * 100).toFixed(3)) : 0,
+      latestCandle: Array.isArray(last)
+        ? {
+            open: toNumberSafe(last[0], 0),
+            high: toNumberSafe(last[1], 0),
+            low: toNumberSafe(last[2], 0),
+            close: toNumberSafe(last[3], 0),
+            volume: toNumberSafe(last[4], 0),
+            timestamp: new Date(toNumberSafe(last[5], 0)).toISOString(),
+            tradeCount: toNumberSafe(last[6], 0)
+          }
+        : null
+    };
+  }
+
+  const metaUrl = buildUrl(
+    'https://web3.binance.com/bapi/defi/v1/public/wallet-direct/buw/wallet/dex/market/token/meta/info',
+    {
+      chainId,
+      contractAddress
+    }
+  );
+  const dynamicUrl = buildUrl(
+    'https://web3.binance.com/bapi/defi/v4/public/wallet-direct/buw/wallet/market/token/dynamic/info',
+    {
+      chainId,
+      contractAddress
+    }
+  );
+
+  const [metaResp, dynamicResp] = await Promise.all([
+    fetchJsonWithInit(
+      metaUrl,
+      {
+        headers: {
+          'Accept-Encoding': 'identity',
+          'User-Agent': 'binance-web3/1.0 (Skill)'
+        }
+      },
+      6500
+    ),
+    fetchJsonWithInit(
+      dynamicUrl,
+      {
+        headers: {
+          'Accept-Encoding': 'identity',
+          'User-Agent': 'binance-web3/1.0 (Skill)'
+        }
+      },
+      6500
+    )
+  ]);
+
+  const meta = metaResp?.data || {};
+  const dynamic = dynamicResp?.data || {};
+  const tagsInfo = dynamic.tagsInfo || meta.tagsInfo || {};
+
+  return {
+    skillId,
+    action: 'overview',
+    chainId,
+    contractAddress,
+    token: {
+      tokenId: String(meta.tokenId || dynamic.tokenId || ''),
+      name: String(meta.name || dynamic.name || ''),
+      symbol: String(meta.symbol || dynamic.symbol || ''),
+      decimals: toNumberSafe(meta.decimals, 0),
+      chainName: String(meta.chainName || ''),
+      creatorAddress: String(meta.creatorAddress || ''),
+      price: toNumberSafe(dynamic.price, 0),
+      change24hPercent: toNumberSafe(dynamic.percentChange24h, 0),
+      marketCap: toNumberSafe(dynamic.marketCap, 0),
+      liquidity: toNumberSafe(dynamic.liquidity, 0),
+      volume24h: toNumberSafe(dynamic.volume24h, 0),
+      holderCount: toNumberSafe(dynamic.holderCount, 0),
+      holderTop10Percent: toNumberSafe(dynamic.holdersTop10Percent, 0),
+      devHoldingPercent: toNumberSafe(dynamic.devHoldingPercent, 0),
+      smartMoneyHoldingPercent: toNumberSafe(dynamic.smartMoneyHoldingPercent, 0),
+      links: Array.isArray(meta.links) ? meta.links : [],
+      tagsInfo,
+      auditInfo: meta.auditInfo || null
+    }
+  };
+}
+
+async function runQueryAddressInfo(input: Record<string, unknown>) {
+  const skillId = 'query-address-info';
+  const address = String(input.address || input.wallet || '').trim();
+  if (!isEvmAddress(address)) {
+    throw new Error('query-address-info requires a valid EVM wallet address');
+  }
+
+  const chainId = normalizeChainId(input.chainId, '56');
+  const offset = Math.max(0, Math.floor(Number(input.offset || 0)));
+  const limit = clampNumber(input.limit, 1, 50, 20);
+  const url = buildUrl(
+    'https://web3.binance.com/bapi/defi/v3/public/wallet-direct/buw/wallet/address/pnl/active-position-list',
+    {
+      address,
+      chainId,
+      offset
+    }
+  );
+  const resp = await fetchJsonWithInit(
+    url,
+    {
+      headers: {
+        clienttype: 'web',
+        clientversion: '1.2.0',
+        'Accept-Encoding': 'identity',
+        'User-Agent': 'binance-web3/1.0 (Skill)'
+      }
+    },
+    6500
+  );
+
+  const list = Array.isArray(resp?.data?.list) ? resp.data.list : [];
+  const positions = list.slice(0, limit).map((item: any) => {
+    const price = toNumberSafe(item.price, 0);
+    const remainQty = toNumberSafe(item.remainQty, 0);
+    return {
+      chainId: String(item.chainId || chainId),
+      contractAddress: String(item.contractAddress || ''),
+      name: String(item.name || ''),
+      symbol: String(item.symbol || ''),
+      price,
+      change24hPercent: toNumberSafe(item.percentChange24h, 0),
+      remainQty,
+      estimatedUsdValue: Number((price * remainQty).toFixed(4))
+    };
+  });
+
+  return {
+    skillId,
+    chainId,
+    address,
+    offset,
+    totalPositions: list.length,
+    estimatedPortfolioUsd: Number(
+      positions
+        .reduce((sum: number, item: { estimatedUsdValue: number }) => sum + item.estimatedUsdValue, 0)
+        .toFixed(4)
+    ),
+    positions
+  };
+}
+
+async function runQueryTokenAudit(input: Record<string, unknown>) {
+  const skillId = 'query-token-audit';
+  const contractAddress = String(input.contractAddress || input.address || '').trim();
+  if (!isEvmAddress(contractAddress)) {
+    throw new Error('query-token-audit requires a valid token contract address');
+  }
+
+  const chainId = normalizeChainId(input.chainId, '56');
+  const requestId = randomUUID();
+  const resp = await fetchJsonWithInit(
+    'https://web3.binance.com/bapi/defi/v1/public/wallet-direct/security/token/audit',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept-Encoding': 'identity',
+        'User-Agent': 'binance-web3/1.0 (Skill)',
+        source: 'agent'
+      },
+      body: JSON.stringify({
+        binanceChainId: chainId,
+        contractAddress,
+        requestId
+      })
+    },
+    7000
+  );
+
+  const data = resp?.data || {};
+  const riskItems = Array.isArray(data.riskItems) ? data.riskItems : [];
+  const triggeredRisks = riskItems.flatMap((group: any) =>
+    (Array.isArray(group?.details) ? group.details : [])
+      .filter((detail: any) => Boolean(detail?.isHit))
+      .map((detail: any) => ({
+        groupId: String(group.id || ''),
+        groupName: String(group.name || ''),
+        title: String(detail.title || ''),
+        description: String(detail.description || ''),
+        riskType: String(detail.riskType || '')
+      }))
+  );
+
+  return {
+    skillId,
+    chainId,
+    contractAddress,
+    requestId,
+    hasResult: Boolean(data.hasResult),
+    isSupported: Boolean(data.isSupported),
+    riskLevelEnum: String(data.riskLevelEnum || 'UNKNOWN'),
+    riskLevel: toNumberSafe(data.riskLevel, -1),
+    extraInfo: {
+      buyTax: data.extraInfo?.buyTax ?? null,
+      sellTax: data.extraInfo?.sellTax ?? null,
+      isVerified: data.extraInfo?.isVerified ?? null
+    },
+    triggeredRiskCount: triggeredRisks.length,
+    triggeredRisks,
+    disclaimer:
+      'Audit results are reference-only snapshots, not investment advice. Re-check before any trade.'
+  };
+}
+
 async function runLocalSkill(skillId: string, input: Record<string, unknown>) {
   switch (skillId) {
     case 'ai-quick-chat': {
@@ -1600,6 +2018,18 @@ async function runLocalSkill(skillId: string, input: Record<string, unknown>) {
 
     case 'bsc-honeypot-check': {
       return runBscHoneypotCheck(input);
+    }
+
+    case 'query-token-info': {
+      return runQueryTokenInfo(input);
+    }
+
+    case 'query-address-info': {
+      return runQueryAddressInfo(input);
+    }
+
+    case 'query-token-audit': {
+      return runQueryTokenAudit(input);
     }
 
     case 'open-interest-scan': {
